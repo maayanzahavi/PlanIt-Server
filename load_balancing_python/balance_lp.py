@@ -4,7 +4,7 @@ import pulp as p
 # Parse the input file and return tasks and members
 def parse_json():
     # Read the input.json file
-    with open("python-algo/input.json", "r") as f:
+    with open("input.json", "r") as f:
         data = json.load(f)
 
     # Access tasks and members
@@ -18,18 +18,29 @@ def create_variables(tasks, members):
     # Create a binary variable for each task-member pair
     for task in tasks:
         for member in members:
-            variables[(task["id"], member["id"])] = p.LpVariable(name=f"{task["id"]},{member["id"]}", cat='Binary')
+            variables[(task["id"], member["id"])] = p.LpVariable(name=f"{task['id']},{member['id']}", cat='Binary')
 
     return variables
 
 # Calculate the score of a task-member pair
 def score(task, member):
     score = 0
+
+    # Matching skills: +2 per skill
     for skill in task["skills"]:
         if skill in member["skills"]:
             score += 2
+
+    # Preference match: +1
     if task["type"] in member["preferences"]:
         score += 1
+
+    # Weight urgency * experience as multiplier
+    urgency = task.get("urgency", 1)
+    experience = member.get("experience", 1)
+
+    score += 0.1 * urgency * experience  
+
     return score
 
 # parse the solution and return the assignments
@@ -38,7 +49,7 @@ def parse_solution(variables):
     solution = {}
     for task in tasks:
         for member in members:
-            if p.value(variables[(task["id"], member["id"])]) == 1:
+            if p.value(variables[(task["id"],member["id"])]) == 1:
                 solution[task["id"]] = member["id"]
     return solution
 
@@ -50,22 +61,24 @@ tasks, members = parse_json()
 variables = create_variables(tasks, members)
 
 # Maximize total score
-for task in tasks:
-    for member in members:
-       problem += score(task, member) * variables[(task["id"], member["id"])]
+problem += p.lpSum([
+    score(task, member) * variables[(task["id"], member["id"])]
+    for task in tasks
+    for member in members
+])
 
 # Each task is assigned to exactly one member
 for task in tasks:
     problem += sum(variables[(task["id"], member["id"])] for member in members) == 1
 
-# Each member can't exceed their availability
+# aEach member can't exceed their availability
 for member in members:
-    problem += sum(variables[(task["id"], member["id"])] * task["time"] for task in tasks) <= member["availability"]
+    problem += sum(variables[(task["id"], member["id"])] * task["weight"] for task in tasks) <= member["availability"]
 
 # Solve the problem
 problem.solve()
 assignments = parse_solution(variables)
 
 # Write to output file
-with open("python-algo/output.json", "w") as f:
+with open("output.json", "w") as f:
     json.dump(assignments, f)
