@@ -22,24 +22,25 @@ def create_variables(tasks, members):
 
     return variables
 
-# Calculate the score of a task-member pair
-def score(task, member):
+def score(task, member, preference_vs_urgency=0.3):
+
     score = 0
 
-    # Matching skills: +2 per skill
+    preference_weight = preference_vs_urgency
+    urgency_weight = 1 - preference_vs_urgency
+
+    # Always count skill match heavily
     for skill in task["skills"]:
         if skill in member["skills"]:
-            score += 2
+            score += 10
 
-    # Preference match: +1
+    # Team leader preference slider affects:
     if task["type"] in member["preferences"]:
-        score += 1
+        score += preference_weight * 10  # scaled to match skill match
 
-    # Weight urgency * experience as multiplier
     urgency = task.get("urgency", 1)
     experience = member.get("experience", 1)
-
-    score += 0.1 * urgency * experience  
+    score += urgency_weight * urgency * experience
 
     return score
 

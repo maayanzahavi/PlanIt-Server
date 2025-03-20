@@ -26,14 +26,14 @@
     {
       "id": "A",
       "skills": ["React", "Node.js"],
-      "preferences": ["Backend"],
-      "availability": 3,
+      "preferences": ["Frontend"],
+      "availability": 4,
       "experience": 5
     },
     {
       "id": "B",
       "skills": ["Node.js", "Python"],
-      "preferences": ["Data"],
+      "preferences": ["Backend"],
       "availability": 5,
       "experience": 1
     }
