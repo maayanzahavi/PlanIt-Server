@@ -57,7 +57,7 @@ const getProjectTasks = async (projectId) => {
     }
 }
 
-exports = {
+module.exports = {
     createTask,
     getTaskById,
     updateTask,

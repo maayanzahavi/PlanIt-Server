@@ -1,13 +1,17 @@
-const userController = require("../controllers/userController");
+const userController = require("../controllers/user");
+
+const express = require('express');
+const router = express.Router();
+
 
 router.route('/')
   .post(userController.createUser);
 
 router.route("/:id")
   .get(userController.getUserById)
-  .put(tokenModel.isLoggedIn ,userController.updateUser)
-  .delete(tokenModel.isLoggedIn, userController.deleteUser);
+  .put(userController.updateUser)
+  .delete(userController.deleteUser);
 
 router.route("/:id/projects")
   .get(userController.getUserVideos)
-  .post(tokenModel.isLoggedIn, videoController.createVideo);
+  .post(videoController.createVideo);

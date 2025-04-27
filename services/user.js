@@ -1,4 +1,6 @@
 const User = require('../models/user');
+const Task = require('../models/task');
+
 
 const createTeamManager = async (user, organizationId) => {
     const newUser = new User(user);
@@ -45,6 +47,22 @@ const getUserById = async (userId) => {
     }
 }
 
+const getUserByUsername = async (username) => {
+    console.log('Fetching user by username:', username);
+    try {
+        const user = await User.findOne({ username }).populate('organization').populate('skills').populate('preferences').populate('projects').populate('team').populate('manager').populate('tasks').populate('notifications');
+        if (!user) {
+            console.log('User not found');
+            throw new Error('User not found');
+        }
+        return user;
+    }
+    catch (error) {
+        console.error('Error fetching user:', error);
+        throw new Error('Error fetching user: ' + error.message);
+    }
+}
+
 const updateUser = async (userId, userData) => {
     try {
         const updatedUser = await User.findByIdAndUpdate(userId, userData, { new: true }).populate('organization').populate('skills').populate('preferences').populate('projects').populate('team').populate('manager').populate('tasks').populate('notifications');
@@ -70,11 +88,12 @@ const deleteUser = async (userId) => {
     }
 }
 
-exports = {
+module.exports = {
     createTeamManager,
     createTeamMember,
     createUser,
     getUserById,
+    getUserByUsername,
     updateUser,
     deleteUser
 }
