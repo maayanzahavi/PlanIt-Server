@@ -1,5 +1,31 @@
 const userService = require('../services/userService');
 
+const createTeamManager = async (req, res) => {
+    try {
+        const user = await userService.createTeamManager(req.body, req.params.organizationId);
+        res.status(201).json(user);
+    } catch (error) {
+        if (error.name === 'ValidationError') {
+            res.status(400).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    }
+}
+
+const createTeamMember = async (req, res) => {
+    try {
+        const user = await userService.createTeamMember(req.body, req.params.organizationId, req.params.managerId);
+        res.status(201).json(user);
+    } catch (error) {
+        if (error.name === 'ValidationError') {
+            res.status(400).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    }
+}
+
 const createUser = async (req, res) => {
     try {
         const user = await userService.createUser(req.body);
@@ -50,4 +76,13 @@ const deleteUser = async (req, res) => {
             res.status(500).json({ error: 'Internal Server Error' });
         }
     }
+};
+
+exports = {
+    createTeamManager,
+    createTeamMember,
+    createUser,
+    getUserById,
+    updateUser,
+    deleteUser
 };

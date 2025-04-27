@@ -1,5 +1,28 @@
 const User = require('../models/user');
 
+const createTeamManager = async (user, organizationId) => {
+    const newUser = new User(user);
+    newUser.organization = organizationId;
+    try {
+        await newUser.save();
+        return newUser;
+    } catch (error) {
+        throw new Error('Error creating user: ' + error.message);
+    }
+}
+
+const createTeamMember = async (user, organizationId, managerId) => {
+    const newUser = new User(user);
+    newUser.organization = organizationId;
+    newUser.manager = managerId;
+    try {
+        await newUser.save();
+        return newUser;
+    } catch (error) {
+        throw new Error('Error creating user: ' + error.message);
+    }
+}
+
 const createUser = async (user) => {
     const newUser = new User(user);
     try {
@@ -45,4 +68,13 @@ const deleteUser = async (userId) => {
     } catch (error) {
         throw new Error('Error deleting user: ' + error.message);
     }
+}
+
+exports = {
+    createTeamManager,
+    createTeamMember,
+    createUser,
+    getUserById,
+    updateUser,
+    deleteUser
 }
