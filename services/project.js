@@ -49,7 +49,7 @@ const deleteProject = async (projectId) => {
     }
 }
 
-exports = {
+module.exports = {
     createProject,
     getProjectById,
     updateProject,

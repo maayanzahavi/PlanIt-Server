@@ -11,6 +11,11 @@ const OrganizationSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
+    },
+    domain: {
+        type: String,
+        required: true,
+        unique: true
     }
 }, { collection: 'Organizations' });
 

@@ -1,4 +1,4 @@
-const  projectService = require('../services/projectService');
+const  projectService = require('../services/project');
 
 const createProject = async (req, res) => {   
     try {
@@ -52,7 +52,7 @@ const deleteProject = async (req, res) => {
     }
 }
 
-exports = {
+module.exports = {
     createProject,
     getProjectById,
     updateProject,

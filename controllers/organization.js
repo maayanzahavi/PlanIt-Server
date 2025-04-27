@@ -1,7 +1,5 @@
 
 const organizationService = require('../services/organization');
-const Organization = require('../models/organization');
-const e = require('express');
 
 const createOrganization = async (res, req) => {
     try {
@@ -31,9 +29,16 @@ const getOrganizationById = async (req, res) => {
 }
 
 const updateOrganization = async (req, res) => {
+    const { domain } = req.params;
     try {
-        const organization = await organizationService.updateOrganization(req.params.id, req.body);
-        res.status(200).json(organization);
+        // Get organization by domain
+        const organization = await organizationService.getOrganizationByDomain(domain);
+        if (!organization) {
+            return res.status(404).json({ error: 'Organization not found' });
+        }
+
+        const newOrganization = await organizationService.updateOrganization(req.params.id, req.body);
+        res.status(200).json(newOrganization);
     } catch (error) {
         if (error.message === 'Organization not found') {
             res.status(404).json({ error: error.message });
@@ -44,9 +49,17 @@ const updateOrganization = async (req, res) => {
 }   
 
 const deleteOrganization = async (req, res) => {
+    const { domain } = req.params;
+
     try {
-        const organization = await organizationService.deleteOrganization(req.params.id);
-        res.status(200).json(organization);
+         // Get organization by domain
+         const organization = await organizationService.getOrganizationByDomain(domain);
+         if (!organization) {
+             return res.status(404).json({ error: 'Organization not found' });
+         }
+
+        const newOrganization = await organizationService.deleteOrganization(req.params.id);
+        res.status(200).json(newOrganization);
     } catch (error) {
         if (error.message === 'Organization not found') {
             res.status(404).json({ error: error.message });
@@ -56,7 +69,7 @@ const deleteOrganization = async (req, res) => {
     }
 }
 
-exports = {
+module.exports = {
     createOrganization,
     getOrganizationById,
     updateOrganization,

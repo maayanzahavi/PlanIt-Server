@@ -1,8 +1,17 @@
-const userService = require('../services/userService');
+const userService = require('../services/user');
+const organizationService = require('../services/organization');
 
 const createTeamManager = async (req, res) => {
     try {
-        const user = await userService.createTeamManager(req.body, req.params.organizationId);
+        // Get organization by domain
+        const { domain } = req.params;
+        const organization = await organizationService.getOrganizationByDomain(domain);
+        if (!organization) {
+            return res.status(404).json({ error: 'Organization not found' });
+        }
+
+        // Create team manager
+        const user = await userService.createTeamManager(req.body, organization._id);
         res.status(201).json(user);
     } catch (error) {
         if (error.name === 'ValidationError') {
@@ -14,8 +23,23 @@ const createTeamManager = async (req, res) => {
 }
 
 const createTeamMember = async (req, res) => {
+    const { domain, username } = req.params;
+
     try {
-        const user = await userService.createTeamMember(req.body, req.params.organizationId, req.params.managerId);
+        // Get organization by domain
+        const organization = await organizationService.getOrganizationByDomain(domain);
+        if (!organization) {
+            return res.status(404).json({ error: 'Organization not found' });
+        }
+
+        // Get manager by username
+        const manager = await userService.getUserByUsername(username);
+        if (!manager) {
+            return res.status(404).json({ error: 'Manager not found' });
+        }
+
+        // Create team member
+        const user = await userService.createTeamMember(req.body, organization._id, manager._id);
         res.status(201).json(user);
     } catch (error) {
         if (error.name === 'ValidationError') {
@@ -52,10 +76,33 @@ const getUserById = async (req, res) => {
     }
 }
 
-const updateUser = async (req, res) => {
+const getUserByUsername = async (req, res) => {
+    console.log(`getUserByUsername called with username: ${req.params.managerUsername}`);
+
     try {
-        const user = await userService.updateUser(req.params.id, req.body);
+        const user = await userService.getUserByUsername(req.params.managerUsername);
         res.status(200).json(user);
+    } catch (error) {
+        if (error.message === 'User not found') {
+            res.status(404).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    }
+}
+
+const updateUser = async (req, res) => {
+    const { username } = req.params;
+
+    try {
+        // Get manager by username
+        const user = await userService.getUserByUsername(username);
+        if (!user) {
+            return res.status(404).json({ error: 'Manager not found' });
+        }
+
+        const newUser = await userService.updateUser(user._id, req.body);
+        res.status(200).json(newUser);
     } catch (error) {
         if (error.message === 'User not found') {
             res.status(404).json({ error: error.message });
@@ -66,9 +113,17 @@ const updateUser = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
+    const { username } = req.params;
+    
     try {
-        const user = await userService.deleteUser(req.params.id);
-        res.status(200).json(user);
+        // Get manager by username
+        const user = await userService.getUserByUsername(username);
+        if (!user) {
+            return res.status(404).json({ error: 'Manager not found' });
+        }
+
+        const newUser = await userService.deleteUser(req.params.id);
+        res.status(200).json(newUser);
     } catch (error) {
         if (error.message === 'User not found') {
             res.status(404).json({ error: error.message });
@@ -78,11 +133,12 @@ const deleteUser = async (req, res) => {
     }
 };
 
-exports = {
+module.exports = {
     createTeamManager,
     createTeamMember,
     createUser,
     getUserById,
+    getUserByUsername,
     updateUser,
     deleteUser
 };

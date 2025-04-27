@@ -1,48 +1,57 @@
 const organizationController = require('../controllers/organization');
 const userController = require('../controllers/user');
+const projectController = require('../controllers/project');
+const taskController = require('../controllers/task');
+
+const express = require('express');
+const router = express.Router();
+
 
 // Organization Routes
 router.route('/')
   .post(organizationController.createOrganization);
 
-router.route("/:id")
+router.route("/:domain")
   .get(organizationController.getOrganizationById)
-  .put(tokenModel.isLoggedIn ,organizationController.updateOrganization)
-  .delete(tokenModel.isLoggedIn, organizationController.deleteOrganization);
+  .put(organizationController.updateOrganization)
+  .delete(organizationController.deleteOrganization);
 
 // Organization Users
-router.route("/:id/managers")
+router.route("/:domain/managers")
   .post(userController.createTeamManager);
 
-router.route("/:id/managers/:managerId")
-  .get(userController.getUserById)
+router.route("/:domain/managers/:managerUsername")
+  .get(userController.getUserByUsername)
   .put(userController.updateUser)
   .delete(userController.deleteUser);
 
 // Organization Manager Projects
-router.route("/:id/managers/:managerId/projects")
-  .get(userController.getUserProjects)
+// router.route("/:domain/managers/:managerUsername/projects")
+//   .get(userController.getUserProjects)
 
 // Organization Manager Team
-router.route("/:id/managers/:managerId/team")
+router.route("/:domain/managers/:managerUsername/team")
   .post(userController.createTeamMember);
 
-router.route("/:id/managers/:managerId/team/:teamMemberId")
+router.route("/:domain/managers/:managerUsername/team/:teamMemberUsername")
   .get(userController.getUserById)
   .put(userController.updateUser)
   .delete(userController.deleteUser);
 
 // Team Manager Projects
-router.route("/:id/managers/:managerId/team/:teamMemberId/projects")
-  .get(userController.getUserProjects);
+router.route("/:domain/managers/:managerUsername/team/:teamMemberUsername/projects")
+  // .get(userController.getUserProjects);
 
-router.route("/:id/managers/:managerId/team/:teamMemberId/projects/:projectId")
-  .get(userController.getProjectById)
+router.route("/:domain/managers/:managerUsername/team/:teamMemberUsername/projects/:projectId")
+  .get(projectController.getProjectById)
 
 // Team Member Tasks
-router.route("/:id/managers/:managerId/team/:teamMemberId/projects/:projectId/tasks")
-  .get(userController.getProjectTasks)
+router.route("/:domain/managers/:managerUsername/team/:teamMemberUsername/projects/:projectId/tasks")
+  .get(taskController.getProjectTasks)
 
-router.route("/:id/managers/:managerId/team/:teamMemberId/projects/:projectId/tasks/:taskId")
-  .get(userController.getTaskById)
-  .put(userController.updateTask)
+router.route("/:domain/managers/:managerUsername/team/:teamMemberUsername/projects/:projectId/tasks/:taskId")
+  .get(taskController.getTaskById)
+  .put(taskController.updateTask)
+
+
+module.exports = router;
