@@ -15,3 +15,8 @@ app.listen(PORT, () => {
 
 // Connecting to routers
 app.use('/api/organizations', organization);
+
+// Port listening to
+app.listen(process.env.PORT, () => {
+  console.log(`Server running at http://localhost:${process.env.PORT}/`);
+});
