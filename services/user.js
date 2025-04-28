@@ -1,6 +1,9 @@
 const User = require('../models/user');
-const Task = require('../models/task');
-
+require('../models/task');
+require('../models/skill');
+require('../models/organization');
+require('../models/project');
+require('../models/notification');
 
 const createTeamManager = async (user, organizationId) => {
     const newUser = new User(user);

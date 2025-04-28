@@ -81,6 +81,7 @@ const getUserByUsername = async (req, res) => {
 
     try {
         const user = await userService.getUserByUsername(req.params.managerUsername);
+        console.log('User found:', user);
         res.status(200).json(user);
     } catch (error) {
         if (error.message === 'User not found') {
