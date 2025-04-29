@@ -28,6 +28,23 @@ const getOrganizationById = async (req, res) => {
     }
 }
 
+const getOrganizationByDomain = async (req, res) => {
+    const { domain } = req.params;
+    try {
+        const organization = await organizationService.getOrganizationByDomain(domain);
+        if (!organization) {
+            return res.status(404).json({ error: 'Organization not found' });
+        }
+        res.status(200).json(organization);
+    } catch (error) {
+        if (error.message === 'Organization not found') {
+            res.status(404).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    }
+}
+
 const updateOrganization = async (req, res) => {
     const { domain } = req.params;
     try {
@@ -73,5 +90,6 @@ module.exports = {
     createOrganization,
     getOrganizationById,
     updateOrganization,
-    deleteOrganization
+    deleteOrganization,
+    getOrganizationByDomain
 }
