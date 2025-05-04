@@ -1,12 +1,17 @@
 const Task = require('../models/task');
 
-const createTask = async (taskData, projectId) => {
-    const newTask = new Task(taskData);
+const createTask = async (task, projectId) => {
+    console.log('Creating task in service:', task);
+    const newTask = new Task(task);
     newTask.project = projectId;
+    newTask.comments = [];
+    console.log('New task:', newTask);
+
     try {
         await newTask.save();
         return newTask;
     } catch (error) {
+        console.error('Error creating task in service:', error);
         throw new Error('Error creating task: ' + error.message);
     }
 }

@@ -39,8 +39,9 @@ const getOrganizationById = async (organizationId) => {
 }
 
 const getOrganizationByDomain = async (domain) => {
+    console.log('Fetching organization by domain in service:', domain);
     try {
-        const organization = await Organization.findOne({ domain }).populate('users').populate('projects').populate('tasks').populate('notifications');
+        const organization = await Organization.findOne({ domain });
         if (!organization) {
             throw new Error('Organization not found');
         }

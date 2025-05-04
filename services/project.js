@@ -1,13 +1,17 @@
-const   Project = require('../models/project');  
+const Project = require('../models/project');  
 
 const createProject = async (project , organizationId, managerId) => {
+    console.log('Creating project in service:', project);
     const newProject = new Project(project);
+    console.log('New project:', newProject);
     newProject.organization = organizationId;
     newProject.manager = managerId;
+    
     try {
         await newProject.save();
         return newProject;
     } catch (error) {
+        console.error('Error creating project in service:', error);
         throw new Error('Error creating project: ' + error.message);
     }
 }

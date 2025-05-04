@@ -1,10 +1,64 @@
 const  projectService = require('../services/project');
+const taskService = require('../services/task');
+const userService = require('../services/user');
+const organizationService = require('../services/organization');
 
 const createProject = async (req, res) => {   
     console.log('Creating project:', req.body);
     const { domain, username } = req.params;
+    console.log('Domain:', domain);
+    console.log('Username:', username);
+    const newProject = req.body;
+
+    // Move tasks to a separate variable
+    // and clear the tasks array in the project object
+    const tasks = newProject.tasks || [];
+    newProject.tasks = [];
+
     try {
-        const project = await projectService.createProject(req.body, req.params.domain);
+        // Create project
+        const manager = await userService.getUserByUsername(username);
+        if (!manager) {
+            return res.status(400).json({ error: 'Manager not found' });
+        } else {
+            console.log('Manager found');
+        }
+        
+        const organization = await organizationService.getOrganizationByDomain(domain);
+        if (!organization) {
+            return res.status(400).json({ error: 'Organization not found' });
+        } else {
+            console.log('Organization found');
+        }
+
+        console.log('Creating project for organization:', organization._id);
+        console.log('Creating project for manager:', manager._id);
+        const project = await projectService.createProject(newProject, organization._id, manager._id);
+        if (!project) {
+            return res.status(400).json({ error: 'Project creation failed' });
+        }
+        console.log('Project created:', project);
+
+        // Create tasks
+        if (tasks && tasks.length > 0) {
+            for (const task of tasks) {
+                // Create task
+                console.log('Creating task:', task);
+                await taskService.createTask(task, project._id);
+                if (!task) {
+                    console.log('Task creation failed');
+                    return res.status(400).json({ error: 'Task creation failed' });
+                }
+                console.log('Task created:', task);
+
+                // Add task to project
+                project.tasks.push(task._id);
+            }
+
+            // Save project with tasks
+            await projectService.updateProject(project._id, project);
+        }
+        console.log('Project with tasks:', project);
         res.status(201).json(project);
     } catch (error) {
         if (error.name === 'ValidationError') {
