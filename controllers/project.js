@@ -1,8 +1,10 @@
 const  projectService = require('../services/project');
 
 const createProject = async (req, res) => {   
+    console.log('Creating project:', req.body);
+    const { domain, username } = req.params;
     try {
-        const project = await projectService.createProject(req.body, req.params.organizationId);
+        const project = await projectService.createProject(req.body, req.params.domain);
         res.status(201).json(project);
     } catch (error) {
         if (error.name === 'ValidationError') {

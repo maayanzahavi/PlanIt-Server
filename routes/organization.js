@@ -2,6 +2,7 @@ const organizationController = require('../controllers/organization');
 const userController = require('../controllers/user');
 const projectController = require('../controllers/project');
 const taskController = require('../controllers/task');
+const tokenModel = require('../models/token');
 
 const express = require('express');
 const router = express.Router();
@@ -11,42 +12,43 @@ router.route('/')
   .post(organizationController.createOrganization);
 
 router.route("/:domain")
-  .get(organizationController.getOrganizationByDomain)
-  .put(organizationController.updateOrganization)
-  .delete(organizationController.deleteOrganization);
+  .get(tokenModel.isLoggedIn, organizationController.getOrganizationByDomain)
+  .put(tokenModel.isLoggedIn, organizationController.updateOrganization)
+  .delete(tokenModel.isLoggedIn, organizationController.deleteOrganization);
 
+router.route("/users/:username")
+.get(tokenModel.isLoggedIn, organizationController.getOrganizationByUsername);
 
 // Users
 router.route("/:domain/users")
-  .post(userController.createTeamManager);
-
-router.route("/:domain/users/:username/team")
-  .post(userController.createTeamManager);
+  .post(tokenModel.isLoggedIn, userController.createTeamManager);
 
 router.route("/:domain/users/:username")
-.get(userController.getUserByUsername)
-.put(userController.updateUser)
-.delete(userController.deleteUser);
+.get(tokenModel.isLoggedIn, userController.getUserByUsername)
+.put(tokenModel.isLoggedIn, userController.updateUser)
+.delete(tokenModel.isLoggedIn, userController.deleteUser);
 
+router.route("/:domain/users/:username/team")
+  .post(tokenModel.isLoggedIn, userController.createTeamMember)
 
 // Projects
-router.route("/:domain/projects")
-  .post(projectController.createProject);
+router.route("/:domain/users/:username/projects")
+  .post(tokenModel.isLoggedIn, projectController.createProject);
 
-router.route("/:domain/projects/:projectId")
-  .get(projectController.getProjectById)
-  .put(projectController.updateProject)
-  .delete(projectController.deleteProject);
+router.route("/:domain/users/:username/projects/:projectId")
+  .get(tokenModel.isLoggedIn, projectController.getProjectById)
+  .put(tokenModel.isLoggedIn, projectController.updateProject)
+  .delete(tokenModel.isLoggedIn, projectController.deleteProject);
 
   
 // Tasks
-router.route("/:domain/projects/:projectId/tasks")
-  .get(taskController.getProjectTasks)
-  .post(taskController.createTask);
+router.route("/:domain/users/:username/projects/:projectId/tasks")
+  .get(tokenModel.isLoggedIn, taskController.getProjectTasks)
+  .post(tokenModel.isLoggedIn, taskController.createTask);
 
-router.route("/:domain/projects/:projectId/tasks/:taskId")
-  .get(taskController.getTaskById)
-  .put(taskController.updateTask)
-  .delete(taskController.deleteTask);
+router.route("/:domain/users/:username/projects/:projectId/tasks/:taskId")
+  .get(tokenModel.isLoggedIn, taskController.getTaskById)
+  .put(tokenModel.isLoggedIn, taskController.updateTask)
+  .delete(tokenModel.isLoggedIn, taskController.deleteTask);
 
 module.exports = router;

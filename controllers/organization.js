@@ -86,10 +86,30 @@ const deleteOrganization = async (req, res) => {
     }
 }
 
+const getOrganizationByUsername = async (req, res) => {
+    const { username } = req.params;
+    console.log('Fetching organization by username in controller:', username);
+    try {
+        const organization = await organizationService.getOrganizationByUsername(username);
+        if (!organization) {
+            console.log('Organization not found in controller');
+            return res.status(404).json({ error: 'Organization not found' });
+        }
+        res.status(200).json(organization);
+    } catch (error) {
+        if (error.message === 'Organization not found') {
+            res.status(404).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    }
+}
+
 module.exports = {
     createOrganization,
     getOrganizationById,
     updateOrganization,
     deleteOrganization,
-    getOrganizationByDomain
+    getOrganizationByDomain,
+    getOrganizationByUsername
 }

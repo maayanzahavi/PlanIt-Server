@@ -1,4 +1,5 @@
 const Organization = require('../models/organization');
+const userService = require('../services/user');
 
 const generateUniqueDomain = async (organizationName) => {
     let baseDomain = organizationName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
@@ -74,10 +75,32 @@ const deleteOrganization = async (organizationId) => {
     }
 }
 
+const getOrganizationByUsername = async (username) => {
+    console.log('Fetching organization by username in service:', username);
+    try {
+        const user = await userService.getUserByUsername(username);
+        if (!user) {
+            console.log('User not found');
+            throw new Error('User not found');
+        }
+
+        if (!user.organization) {
+            console.log('Organization not found');
+            throw new Error('Organization not found');
+        }
+        console.log('User organization:', user.organization);
+        return user.organization;
+    }
+    catch (error) {
+        throw new Error('Error fetching organization: ' + error.message);
+    }
+}
+
 module.exports = {
     createOrganization,
     getOrganizationById,
     updateOrganization,
     deleteOrganization,
-    getOrganizationByDomain
+    getOrganizationByDomain,
+    getOrganizationByUsername
 }
