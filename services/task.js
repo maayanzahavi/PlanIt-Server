@@ -1,4 +1,5 @@
 const Task = require('../models/task');
+const TaskComment = require('../models/taskComment');
 
 const createTask = async (task, projectId) => {
     console.log('Creating task in service:', task);
@@ -17,13 +18,16 @@ const createTask = async (task, projectId) => {
 }
 
 const getTaskById = async (taskId) => {
+    console.log('Getting task by ID in service:', taskId);
     try {
         const task = await Task.findById(taskId).populate('project').populate('tags').populate('assignedTo').populate('comments');
         if (!task) {
+            console.log('Task not found');
             throw new Error('Task not found');
         }
         return task;
     } catch (error) {
+        console.error('Error fetching task:', error);
         throw new Error('Error fetching task: ' + error.message);
     }
 }

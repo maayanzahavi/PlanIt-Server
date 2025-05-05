@@ -33,7 +33,12 @@ const TaskSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'TaskComment',
         default: []
-    }]
+    }],
+    status: {
+        type: String,
+        enum: ['To Do', 'In Progress', 'Done'],
+        default: 'To Do'
+    },
 }, { collection: 'Tasks' });
 
 module.exports = mongoose.model('Task', TaskSchema);
