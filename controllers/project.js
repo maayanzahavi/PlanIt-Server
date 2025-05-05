@@ -85,8 +85,9 @@ const createProject = async (req, res) => {
 }
 
 const getProjectById = async (req, res) => {
+    const { domain, username, projectId } = req.params;
     try {
-        const project = await projectService.getProjectById(req.params.id);
+        const project = await projectService.getProjectById(projectId);
         res.status(200).json(project);
     } catch (error) {
         if (error.message === 'Project not found') {
@@ -98,13 +99,20 @@ const getProjectById = async (req, res) => {
 }
 
 const updateProject = async (req, res) => {
+    console.log('Updating project:', req.body);
+    const { domain, username, projectId } = req.params;
+    console.log('Project ID:', projectId);
+
     try {
-        const project = await projectService.updateProject(req.params.id, req.body);
+        const project = await projectService.updateProject(projectId, req.body);
+        console.log('Project updated:', projectId);
         res.status(200).json(project);
     } catch (error) {
         if (error.message === 'Project not found') {
+            console.log('Project not found:', projectId);
             res.status(404).json({ error: error.message });
         } else {
+            console.error('Error updating project:', error);
             res.status(500).json({ error: 'Internal Server Error' });
         }
     }
