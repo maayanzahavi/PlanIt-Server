@@ -2,6 +2,7 @@ const  projectService = require('../services/project');
 const taskService = require('../services/task');
 const userService = require('../services/user');
 const organizationService = require('../services/organization');
+const project = require('../models/project');
 
 const createProject = async (req, res) => {   
     console.log('Creating project:', req.body);
@@ -13,6 +14,8 @@ const createProject = async (req, res) => {
     // Move tasks to a separate variable
     // and clear the tasks array in the project object
     const tasks = newProject.tasks || [];
+    console.log('Project tasks:', tasks);
+    console.log('Project members:', project.team);
     newProject.tasks = [];
 
     try {
@@ -33,37 +36,49 @@ const createProject = async (req, res) => {
 
         console.log('Creating project for organization:', organization._id);
         console.log('Creating project for manager:', manager._id);
+
+        // Save project with organization and manager
         const project = await projectService.createProject(newProject, organization._id, manager._id);
         if (!project) {
             return res.status(400).json({ error: 'Project creation failed' });
         }
-        console.log('Project created:', project);
+        console.log('Project created:', project._id);
 
         // Create tasks
+        const taskIds = [];
         if (tasks && tasks.length > 0) {
-            for (const task of tasks) {
+            for (const t of tasks) {
                 // Create task
-                console.log('Creating task:', task);
-                await taskService.createTask(task, project._id);
+                console.log('Creating task:', t);
+                const task = await taskService.createTask(t, project._id);
                 if (!task) {
                     console.log('Task creation failed');
                     return res.status(400).json({ error: 'Task creation failed' });
                 }
-                console.log('Task created:', task);
+                console.log('Task created:', task._id);
 
-                // Add task to project
-                project.tasks.push(task._id);
+                // Add task ID to tasks array
+                taskIds.push(task._id);
+                console.log('Task added to project:', task._id);
+                console.log('Project tasks:', project.tasks);
             }
-
-            // Save project with tasks
-            await projectService.updateProject(project._id, project);
         }
-        console.log('Project with tasks:', project);
-        res.status(201).json(project);
+        // Save project with tasks
+        const projectWithTasks = await projectService.addTasksToProject(project, taskIds);
+        if (!projectWithTasks) {
+            console.log('Project update failed');
+            return res.status(400).json({ error: 'Project update failed' });
+        }
+
+        console.log('Project with tasks:', projectWithTasks._id);
+        res.status(201).json(projectWithTasks);
+
     } catch (error) {
         if (error.name === 'ValidationError') {
+            console.error('Validation error:', error);
             res.status(400).json({ error: error.message });
         } else {
+            console.error('Error creating project:', error);
             res.status(500).json({ error: 'Internal Server Error' });
         }
     }

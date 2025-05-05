@@ -28,15 +28,20 @@ const getProjectById = async (projectId) => {
     } 
 }
 
-const updateProject = async (projectId, projectData) => {     
+const updateProject = async (project) => {    
+    console.log('Updating project in service:', project._id); 
+
     try {
-        const updatedProject = await Project.findByIdAndUpdate(projectId, projectData, { new: true }).populate('organization').populate('manager').populate('team').populate('tasks').populate('notifications');
+        const updatedProject = await Project.findByIdAndUpdate(project._id, project, { new: true }).populate('manager').populate('team').populate('tasks');
         if (!updatedProject) {     
+            console.log('Project not found');
             throw new Error('Project not found');
         }
+        console.log('Updated project:', updatedProject);
         return updatedProject;
     }
     catch (error) {
+        console.error('Error updating project:', error);
         throw new Error('Error updating project: ' + error.message);
     }       
 }
@@ -53,9 +58,27 @@ const deleteProject = async (projectId) => {
     }
 }
 
+const addTasksToProject = async (project, tasks) => {
+    console.log('Adding tasks to project in service:', project._id);
+    console.log('Tasks:', tasks);
+    try {
+        const updatedProject = await Project.findByIdAndUpdate(project._id, { $push: { tasks: { $each: tasks } } }, { new: true }).populate('manager').populate('team').populate('tasks');
+        if (!updatedProject) {
+            console.log('Project not found');
+            throw new Error('Project not found');
+        }
+        console.log('Updated project with tasks:', updatedProject);
+        return updatedProject;
+    } catch (error) {
+        console.error('Error adding tasks to project:', error);
+        throw new Error('Error adding tasks to project: ' + error.message);
+    }
+}
+
 module.exports = {
     createProject,
     getProjectById,
     updateProject,
-    deleteProject
+    deleteProject,
+    addTasksToProject
 };  
