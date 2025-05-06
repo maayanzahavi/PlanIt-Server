@@ -3,6 +3,7 @@ const userController = require('../controllers/user');
 const projectController = require('../controllers/project');
 const taskController = require('../controllers/task');
 const tokenModel = require('../models/token');
+const taskCommentController = require('../controllers/taskComment');
 
 const express = require('express');
 const router = express.Router();
@@ -50,5 +51,9 @@ router.route("/:domain/users/:username/projects/:projectId/tasks/:taskId")
   .get(tokenModel.isLoggedIn, taskController.getTaskById)
   .put(tokenModel.isLoggedIn, taskController.updateTask)
   .delete(tokenModel.isLoggedIn, taskController.deleteTask);
+
+// Task Comments
+router.route("/:domain/users/:username/projects/:projectId/tasks/:taskId/comments")
+  .post(tokenModel.isLoggedIn, taskCommentController.createTaskComment);
 
 module.exports = router;
