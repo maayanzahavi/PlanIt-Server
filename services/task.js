@@ -1,4 +1,6 @@
+const mongoose = require('mongoose');
 const Task = require('../models/task');
+const Skill = require('../models/skill');
 const TaskComment = require('../models/taskComment');
 
 const createTask = async (task, projectId) => {
@@ -25,6 +27,7 @@ const getTaskById = async (taskId) => {
             console.log('Task not found');
             throw new Error('Task not found');
         }
+        console.log('Task found in service:', task);
         return task;
     } catch (error) {
         console.error('Error fetching task:', error);

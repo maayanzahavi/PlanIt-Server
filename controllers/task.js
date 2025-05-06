@@ -19,6 +19,11 @@ const getTaskById = async (req, res) => {
     console.log('Getting task by ID:', taskId);
     try {
         const task = await taskService.getTaskById(taskId);
+        if (!task) {
+            console.log('Task not found');
+            return res.status(404).json({ error: 'Task not found' });
+        }
+        console.log('Task found:', task);
         res.status(200).json(task);
     } catch (error) {
         if (error.message === 'Task not found') {
