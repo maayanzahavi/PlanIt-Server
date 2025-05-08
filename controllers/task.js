@@ -73,10 +73,28 @@ const getProjectTasks = async (req, res) => {
     }
 }
 
+const changeTaskStatus = async (req, res) => {
+    console.log('Changing task status:', req.params.taskId, req.body.status);
+    const { domain, username, projectId, taskId } = req.params;
+    const { status } = req.body;
+    try {
+        const task = await taskService.changeTaskStatus(taskId, status);
+        res.status(200).json(task);
+    } catch (error) {
+        if (error.message === 'Task not found') {
+            res.status(404).json({ error: error.message });
+        } else {
+            console.error('Error changing task status:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    }
+}
+
 module.exports = {
     createTask,
     getTaskById,
     updateTask,
     deleteTask,
-    getProjectTasks
+    getProjectTasks,
+    changeTaskStatus
 }

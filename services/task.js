@@ -69,10 +69,27 @@ const getProjectTasks = async (projectId) => {
     }
 }
 
+
+const changeTaskStatus = async (taskId, status) => {
+    console.log('Changing task status in service:', taskId, status);
+    try {
+        const updatedTask = await Task.findByIdAndUpdate(taskId, { status }, { new: true }).populate('project').populate('assignedTo').populate('tags').populate('comments');
+        if (!updatedTask) {
+            throw new Error('Task not found');
+        }
+        return updatedTask;
+    }
+    catch (error) {
+        console.error('Error updating task status:', error);
+        throw new Error('Error updating task status: ' + error.message);
+    }
+}
+
 module.exports = {
     createTask,
     getTaskById,
     updateTask,
     deleteTask,
-    getProjectTasks
+    getProjectTasks,
+    changeTaskStatus
 }
