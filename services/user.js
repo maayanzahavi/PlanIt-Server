@@ -1,6 +1,21 @@
 const User = require('../models/user');
-const Task = require('../models/task');
+require('../models/task');
+require('../models/skill');
+require('../models/organization');
+require('../models/project');
+require('../models/notification');
 
+async function isSigned(username, password) {
+    try {
+      let user = await User.findOne({ username, password });
+      if (!user) {
+        return false;
+      }
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
 
 const createTeamManager = async (user, organizationId) => {
     const newUser = new User(user);
@@ -89,6 +104,7 @@ const deleteUser = async (userId) => {
 }
 
 module.exports = {
+    isSigned,
     createTeamManager,
     createTeamMember,
     createUser,

@@ -1,24 +1,36 @@
+const mongoose = require('mongoose');
 const Task = require('../models/task');
+const Skill = require('../models/skill');
+const TaskComment = require('../models/taskComment');
 
-const createTask = async (taskData, projectId) => {
-    const newTask = new Task(taskData);
+const createTask = async (task, projectId) => {
+    console.log('Creating task in service:', task);
+    const newTask = new Task(task);
     newTask.project = projectId;
+    newTask.comments = [];
+    console.log('New task:', newTask);
+
     try {
         await newTask.save();
         return newTask;
     } catch (error) {
+        console.error('Error creating task in service:', error);
         throw new Error('Error creating task: ' + error.message);
     }
 }
 
 const getTaskById = async (taskId) => {
+    console.log('Getting task by ID in service:', taskId);
     try {
         const task = await Task.findById(taskId).populate('project').populate('tags').populate('assignedTo').populate('comments');
         if (!task) {
+            console.log('Task not found');
             throw new Error('Task not found');
         }
+        console.log('Task found in service:', task);
         return task;
     } catch (error) {
+        console.error('Error fetching task:', error);
         throw new Error('Error fetching task: ' + error.message);
     }
 }
@@ -57,10 +69,27 @@ const getProjectTasks = async (projectId) => {
     }
 }
 
+
+const changeTaskStatus = async (taskId, status) => {
+    console.log('Changing task status in service:', taskId, status);
+    try {
+        const updatedTask = await Task.findByIdAndUpdate(taskId, { status }, { new: true }).populate('project').populate('assignedTo').populate('tags').populate('comments');
+        if (!updatedTask) {
+            throw new Error('Task not found');
+        }
+        return updatedTask;
+    }
+    catch (error) {
+        console.error('Error updating task status:', error);
+        throw new Error('Error updating task status: ' + error.message);
+    }
+}
+
 module.exports = {
     createTask,
     getTaskById,
     updateTask,
     deleteTask,
-    getProjectTasks
+    getProjectTasks,
+    changeTaskStatus
 }

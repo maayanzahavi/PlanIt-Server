@@ -2,56 +2,61 @@ const organizationController = require('../controllers/organization');
 const userController = require('../controllers/user');
 const projectController = require('../controllers/project');
 const taskController = require('../controllers/task');
+const tokenModel = require('../models/token');
+const taskCommentController = require('../controllers/taskComment');
 
 const express = require('express');
 const router = express.Router();
 
-
-// Organization Routes
+// Organizations
 router.route('/')
   .post(organizationController.createOrganization);
 
 router.route("/:domain")
-  .get(organizationController.getOrganizationById)
-  .put(organizationController.updateOrganization)
-  .delete(organizationController.deleteOrganization);
+  .get(tokenModel.isLoggedIn, organizationController.getOrganizationByDomain)
+  .put(tokenModel.isLoggedIn, organizationController.updateOrganization)
+  .delete(tokenModel.isLoggedIn, organizationController.deleteOrganization);
 
-// Organization Users
-router.route("/:domain/managers")
-  .post(userController.createTeamManager);
+router.route("/users/:username")
+.get(tokenModel.isLoggedIn, organizationController.getOrganizationByUsername);
 
-router.route("/:domain/managers/:managerUsername")
-  .get(userController.getUserByUsername)
-  .put(userController.updateUser)
-  .delete(userController.deleteUser);
+// Users
+router.route("/:domain/users")
+  .post(tokenModel.isLoggedIn, userController.createTeamManager);
 
-// Organization Manager Projects
-// router.route("/:domain/managers/:managerUsername/projects")
-//   .get(userController.getUserProjects)
+router.route("/:domain/users/:username")
+.get(tokenModel.isLoggedIn, userController.getUserByUsername)
+.put(tokenModel.isLoggedIn, userController.updateUser)
+.delete(tokenModel.isLoggedIn, userController.deleteUser);
 
-// Organization Manager Team
-router.route("/:domain/managers/:managerUsername/team")
-  .post(userController.createTeamMember);
+router.route("/:domain/users/:username/team")
+  .post(tokenModel.isLoggedIn, userController.createTeamMember)
 
-router.route("/:domain/managers/:managerUsername/team/:teamMemberUsername")
-  .get(userController.getUserById)
-  .put(userController.updateUser)
-  .delete(userController.deleteUser);
+// Projects
+router.route("/:domain/users/:username/projects")
+  .post(tokenModel.isLoggedIn, projectController.createProject);
 
-// Team Manager Projects
-router.route("/:domain/managers/:managerUsername/team/:teamMemberUsername/projects")
-  // .get(userController.getUserProjects);
+router.route("/:domain/users/:username/projects/:projectId")
+  .get(tokenModel.isLoggedIn, projectController.getProjectById)
+  .put(tokenModel.isLoggedIn, projectController.updateProject)
+  .delete(tokenModel.isLoggedIn, projectController.deleteProject);
 
-router.route("/:domain/managers/:managerUsername/team/:teamMemberUsername/projects/:projectId")
-  .get(projectController.getProjectById)
+  
+// Tasks
+router.route("/:domain/users/:username/projects/:projectId/tasks")
+  .get(tokenModel.isLoggedIn, taskController.getProjectTasks)
+  .post(tokenModel.isLoggedIn, taskController.createTask);
 
-// Team Member Tasks
-router.route("/:domain/managers/:managerUsername/team/:teamMemberUsername/projects/:projectId/tasks")
-  .get(taskController.getProjectTasks)
+router.route("/:domain/users/:username/projects/:projectId/tasks/:taskId")
+  .get(tokenModel.isLoggedIn, taskController.getTaskById)
+  .put(tokenModel.isLoggedIn, taskController.updateTask)
+  .delete(tokenModel.isLoggedIn, taskController.deleteTask);
 
-router.route("/:domain/managers/:managerUsername/team/:teamMemberUsername/projects/:projectId/tasks/:taskId")
-  .get(taskController.getTaskById)
-  .put(taskController.updateTask)
+router.route("/:domain/users/:username/projects/:projectId/tasks/:taskId/status")
+  .put(tokenModel.isLoggedIn, taskController.changeTaskStatus);
 
+// Task Comments
+router.route("/:domain/users/:username/projects/:projectId/tasks/:taskId/comments")
+  .post(tokenModel.isLoggedIn, taskCommentController.createTaskComment);
 
 module.exports = router;

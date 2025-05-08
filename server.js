@@ -8,6 +8,8 @@ const app = express();
 
 const balanceRoutes = require("./routes/balance");
 const organization = require('./routes/organization');
+const tokens = require('./routes/token');
+const skill = require('./routes/skill');
 
 // Middleware
 app.use(cors()); 
@@ -16,6 +18,8 @@ app.use(express.json());
 // Routes
 app.use("/balance", balanceRoutes);
 app.use('/api/organizations', organization);
+app.use('/api/tokens', tokens);
+app.use('/api/skills', skill);
 
 // Connect to MongoDB
 mongoose.connect(process.env.CONNECTION_STRING)

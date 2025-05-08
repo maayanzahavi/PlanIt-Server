@@ -77,10 +77,11 @@ const getUserById = async (req, res) => {
 }
 
 const getUserByUsername = async (req, res) => {
-    console.log(`getUserByUsername called with username: ${req.params.managerUsername}`);
+    console.log(`getUserByUsername called with username: ${req.params.username}`);
 
     try {
-        const user = await userService.getUserByUsername(req.params.managerUsername);
+        const user = await userService.getUserByUsername(req.params.username);
+        console.log('User found:', user);
         res.status(200).json(user);
     } catch (error) {
         if (error.message === 'User not found') {
