@@ -1,19 +1,15 @@
 
 const organizationService = require('../services/organization');
 
-const createOrganization = async (res, req) => {
+const createOrganization = async (req, res) => {
     try {
-        const organization = await organizationService.createOrganization(req.body);
-        res.status(201).json(organization);
+      const result = await organizationService.createOrganization(req.body);
+      res.status(201).json(result); 
     } catch (error) {
-        if (error.name === 'ValidationError') {
-            res.status(400).json({ error: error.message });
-        } else {
-            res.status(500).json({ error: 'Internal Server Error' });
-        }
+      console.error('Error in controller:', error);
+      res.status(500).json({ error: error.message });
     }
-
-}
+  };
 
 const getOrganizationById = async (req, res) => {
     try {

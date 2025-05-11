@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 const Task = require('../models/task');
 const Skill = require('../models/skill');
-const TaskComment = require('../models/taskComment');
+const TaskComment = require('../models/taskComment');   
+const userService = require('./user');
+const projectService = require('./project');
 
 const createTask = async (task, projectId) => {
     console.log('Creating task in service:', task);
@@ -50,15 +52,30 @@ const updateTask = async (taskId, taskData) => {
 
 const deleteTask = async (taskId) => {
     try {
-        const deletedTask = await Task.findByIdAndDelete(taskId);
-        if (!deletedTask) {
-            throw new Error('Task not found');
-        }
-        return deletedTask;
+      const task = await Task.findById(taskId);
+      if (!task) {
+        throw new Error('Task not found');
+      }
+  
+      // Remove task from assigned user
+      if (task.assignedTo) {
+        await userService.removeTaskFromUser(task.assignedTo, taskId);
+      }
+  
+      // Remove task from project
+      if (task.project) {
+        await projectService.removeTaskFromProject(task.project, taskId);
+      }
+  
+      // Delete the task itself
+      await Task.findByIdAndDelete(taskId);
+      console.log(`Task ${taskId} deleted successfully`);
     } catch (error) {
-        throw new Error('Error deleting task: ' + error.message);
+      console.error('Error deleting task:', error.message);
+      throw new Error('Error deleting task: ' + error.message);
     }
-}
+  };
+  
 
 const getProjectTasks = async (projectId) => {
     try {

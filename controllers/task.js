@@ -48,17 +48,20 @@ const updateTask = async (req, res) => {
 }
 
 const deleteTask = async (req, res) => {
+    const taskId = req.params.taskId;
+
     try {
-        const task = await taskService.deleteTask(req.params.taskId);
-        res.status(200).json(task);
+        const deletedTask = await taskService.deleteTask(taskId);
+        res.status(200).json({ message: 'Task deleted successfully', task: deletedTask });
     } catch (error) {
         if (error.message === 'Task not found') {
             res.status(404).json({ error: error.message });
         } else {
+            console.error('Error deleting task:', error);
             res.status(500).json({ error: 'Internal Server Error' });
         }
     }
-}
+};
 
 const getProjectTasks = async (req, res) => {
     try {
