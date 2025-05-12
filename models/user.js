@@ -29,6 +29,10 @@ const UserSchema = new Schema({
     enum: ['organization_head', 'manager', 'team_member'],
     required: true
   },
+  profilePic: {
+    type: String, 
+    default: ""   
+  },
   manager: {
     type: Schema.Types.ObjectId,
     ref: 'User',

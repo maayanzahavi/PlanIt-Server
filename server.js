@@ -8,6 +8,7 @@ const app = express();
 
 const balanceRoutes = require("./routes/balance");
 const organization = require('./routes/organization');
+console.log('[DEBUG] About to load /api/tokens route');
 const tokens = require('./routes/token');
 const skill = require('./routes/skill');
 

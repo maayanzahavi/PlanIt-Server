@@ -34,8 +34,9 @@ const generateUniqueDomain = async (organizationName) => {
         lastName: organizationData.headLastName,
         role: 'organization_head',
         password: hashedPassword,
+        profilePic: organizationData.profilePic ?? "",
         experience: 0,
-        organization: null // temporarily null
+        organization: null 
       });
   
       await headUser.validate(); // this checks everything before save

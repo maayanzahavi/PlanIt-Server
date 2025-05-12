@@ -117,13 +117,13 @@ const deleteUser = async (req, res) => {
     const { username } = req.params;
     
     try {
-        // Get manager by username
         const user = await userService.getUserByUsername(username);
+        console.log('User found:', user.username);
         if (!user) {
-            return res.status(404).json({ error: 'Manager not found' });
+            return res.status(404).json({ error: 'user not found' });
         }
 
-        const newUser = await userService.deleteUser(req.params.id);
+        const newUser = await userService.deleteUser(user._id);
         res.status(200).json(newUser);
     } catch (error) {
         if (error.message === 'User not found') {
