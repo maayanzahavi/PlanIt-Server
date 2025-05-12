@@ -50,22 +50,21 @@ async function isSigned(username, password) {
       });
   
       await newUser.save();
-      console.log("✅ Saved manager user:", newUser);
+      console.log("Saved manager user:", newUser);
   
       if (creatorId) {
         const result = await User.findByIdAndUpdate(
           creatorId,
-          { $addToSet: { team: newUser._id } }, // כדי למנוע כפילויות
+          { $addToSet: { team: newUser._id } }, 
           { new: true }
-        ).populate('team'); // נוסיף את זה ללוג
-        console.log('✅ Creator after update:', result);
+        ).populate('team'); 
       } else {
-        console.warn("⚠️ No creatorId provided — team not updated.");
+        console.warn("No creatorId provided — team not updated.");
       }
   
       return newUser;
     } catch (error) {
-      console.error("❌ Error in createTeamManager service:", error);
+      console.error("Error in createTeamManager service:", error);
       throw new Error('Error creating manager user: ' + error.message);
     }
   };

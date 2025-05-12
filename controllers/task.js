@@ -48,6 +48,8 @@ const updateTask = async (req, res) => {
 }
 
 const deleteTask = async (req, res) => {
+    console.log("=== deleteTask controller called ===");
+console.log("params:", req.params);
     const taskId = req.params.taskId;
 
     try {

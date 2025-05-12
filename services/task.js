@@ -4,6 +4,7 @@ const Skill = require('../models/skill');
 const TaskComment = require('../models/taskComment');   
 const userService = require('./user');
 const projectService = require('./project');
+const Project = require('../models/project');
 
 const createTask = async (task, projectId) => {
     console.log('Creating task in service:', task);
@@ -54,27 +55,35 @@ const deleteTask = async (taskId) => {
     try {
       const task = await Task.findById(taskId);
       if (!task) {
+        console.log("No task found to delete:", taskId);
         throw new Error('Task not found');
       }
   
-      // Remove task from assigned user
+      console.log("Task to delete:", task._id);
+  
       if (task.assignedTo) {
+        console.log("Removing task from user:", task.assignedTo);
         await userService.removeTaskFromUser(task.assignedTo, taskId);
       }
   
-      // Remove task from project
       if (task.project) {
-        await projectService.removeTaskFromProject(task.project, taskId);
+        console.log("Removing task from project:", task.project);
+        await Project.findByIdAndUpdate(task.project, {
+          $pull: { tasks: taskId }
+        });
       }
+      
   
-      // Delete the task itself
       await Task.findByIdAndDelete(taskId);
       console.log(`Task ${taskId} deleted successfully`);
+      
+      return task;
     } catch (error) {
       console.error('Error deleting task:', error.message);
       throw new Error('Error deleting task: ' + error.message);
     }
   };
+  
   
 
 const getProjectTasks = async (projectId) => {
