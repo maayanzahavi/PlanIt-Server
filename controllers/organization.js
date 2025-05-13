@@ -101,11 +101,24 @@ const getOrganizationByUsername = async (req, res) => {
     }
 }
 
+const getAllUsersInOrganization = async (req, res) => {
+    const { domain } = req.params;
+  
+    try {
+      const users = await organizationService.getAllUsersInOrganization(domain);
+      res.status(200).json(users);
+    } catch (error) {
+      console.error("Error in getAllUsersInOrganization:", error);
+      res.status(500).json({ error: error.message });
+    }
+  };
+
 module.exports = {
     createOrganization,
     getOrganizationById,
     updateOrganization,
     deleteOrganization,
     getOrganizationByDomain,
-    getOrganizationByUsername
+    getOrganizationByUsername,
+    getAllUsersInOrganization
 }

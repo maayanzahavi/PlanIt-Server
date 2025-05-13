@@ -140,12 +140,20 @@ const getOrganizationByUsername = async (username) => {
         throw new Error('Error fetching organization: ' + error.message);
     }
 }
-
+const getAllUsersInOrganization = async (domain) => {
+    const organization = await Organization.findOne({ domain });
+    if (!organization) {
+      throw new Error('Organization not found');
+    }
+    const users = await User.find({ organization: organization._id });
+    return users;
+  };
 module.exports = {
     createOrganization,
     getOrganizationById,
     updateOrganization,
     deleteOrganization,
     getOrganizationByDomain,
-    getOrganizationByUsername
+    getOrganizationByUsername,
+    getAllUsersInOrganization
 }
