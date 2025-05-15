@@ -22,6 +22,7 @@ router.route("/users/:username")
 
 // Users
 router.route("/:domain/users")
+  .get(tokenModel.isLoggedIn, organizationController.getAllUsersInOrganization)
   .post(tokenModel.isLoggedIn, userController.createTeamManager);
 
 router.route("/:domain/users/:username")
@@ -45,7 +46,7 @@ router.route("/:domain/users/:username/projects/:projectId")
 // Tasks
 router.route("/:domain/users/:username/projects/:projectId/tasks")
   .get(tokenModel.isLoggedIn, taskController.getProjectTasks)
-  .post(tokenModel.isLoggedIn, taskController.createTask);
+  .post(tokenModel.isLoggedIn, taskController.createTask)
 
 router.route("/:domain/users/:username/projects/:projectId/tasks/:taskId")
   .get(tokenModel.isLoggedIn, taskController.getTaskById)
@@ -58,5 +59,8 @@ router.route("/:domain/users/:username/projects/:projectId/tasks/:taskId/status"
 // Task Comments
 router.route("/:domain/users/:username/projects/:projectId/tasks/:taskId/comments")
   .post(tokenModel.isLoggedIn, taskCommentController.createTaskComment);
+
+router.route("/:domain/users/:username/projects/:projectId/tasks/:taskId/comments/:commentId")
+  .delete(tokenModel.isLoggedIn, taskCommentController.deleteTaskComment);
 
 module.exports = router;

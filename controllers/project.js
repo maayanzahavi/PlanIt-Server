@@ -119,17 +119,22 @@ const updateProject = async (req, res) => {
 }
 
 const deleteProject = async (req, res) => {
+    const { projectId } = req.params;
+  
     try {
-        await projectService.deleteProject(req.params.id);
-        res.status(204).send();
+      const result = await projectService.deleteProject(projectId);
+      if (result) {
+        return res.status(200).json({ message: 'Project deleted successfully' });
+      }
     } catch (error) {
-        if (error.message === 'Project not found') {
-            res.status(404).json({ error: error.message });
-        } else {
-            res.status(500).json({ error: 'Internal Server Error' });
-        }
+      if (error.message.includes('Project not found')) {
+        return res.status(404).json({ error: error.message });
+      } else {
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
     }
-}
+  };
+
 
 module.exports = {
     createProject,

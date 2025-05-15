@@ -8,12 +8,13 @@ const app = express();
 
 const balanceRoutes = require("./routes/balance");
 const organization = require('./routes/organization');
+console.log('[DEBUG] About to load /api/tokens route');
 const tokens = require('./routes/token');
 const skill = require('./routes/skill');
 
 // Middleware
 app.use(cors()); 
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
 // Routes
 app.use("/balance", balanceRoutes);

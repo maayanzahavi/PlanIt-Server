@@ -3,24 +3,24 @@ const organizationService = require('../services/organization');
 
 const createTeamManager = async (req, res) => {
     try {
-        // Get organization by domain
-        const { domain } = req.params;
-        const organization = await organizationService.getOrganizationByDomain(domain);
-        if (!organization) {
-            return res.status(404).json({ error: 'Organization not found' });
-        }
-
-        // Create team manager
-        const user = await userService.createTeamManager(req.body, organization._id);
-        res.status(201).json(user);
+      const { domain } = req.params;
+      const organization = await organizationService.getOrganizationByDomain(domain);
+      if (!organization) {
+        return res.status(404).json({ error: 'Organization not found' });
+      }
+  
+      const creator = await userService.getUserByUsername(req.user.username);
+      const creatorId = creator._id;
+      const newManager = await userService.createTeamManager(req.body, organization._id, creatorId);
+  
+      console.log("Manager saved:", newManager);
+      res.status(201).json(newManager);
     } catch (error) {
-        if (error.name === 'ValidationError') {
-            res.status(400).json({ error: error.message });
-        } else {
-            res.status(500).json({ error: 'Internal Server Error' });
-        }
+      console.error("Error creating team manager:", error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
-}
+  };
+  
 
 const createTeamMember = async (req, res) => {
     const { domain, username } = req.params;
@@ -117,13 +117,13 @@ const deleteUser = async (req, res) => {
     const { username } = req.params;
     
     try {
-        // Get manager by username
         const user = await userService.getUserByUsername(username);
+        console.log('User found:', user.username);
         if (!user) {
-            return res.status(404).json({ error: 'Manager not found' });
+            return res.status(404).json({ error: 'user not found' });
         }
 
-        const newUser = await userService.deleteUser(req.params.id);
+        const newUser = await userService.deleteUser(user._id);
         res.status(200).json(newUser);
     } catch (error) {
         if (error.message === 'User not found') {

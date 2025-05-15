@@ -12,6 +12,10 @@ const UserSchema = new Schema({
     required: true,
     unique: true
   },
+  password: {
+    type: String,
+    required: true
+  },
   firstName: {
     type: String,
     required: true
@@ -25,20 +29,20 @@ const UserSchema = new Schema({
     enum: ['organization_head', 'manager', 'team_member'],
     required: true
   },
+  profilePic: {
+    type: String, 
+    default: ""   
+  },
   manager: {
     type: Schema.Types.ObjectId,
     ref: 'User',
     default: null
   },
-  team: [{
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    default: []
-  }],
+  team: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   organization: {
     type: Schema.Types.ObjectId,
     ref: 'Organization',
-    required: true
+    required: false
   },
   experience: {
     type: Number,
@@ -49,11 +53,11 @@ const UserSchema = new Schema({
     ref: 'Skill',
     default: []
   }],
-  preferences: {
+  preferences: [{
     type: Schema.Types.ObjectId,
     ref: 'Skill',
     default: []
-  },
+  }] ,
   projects: [{
     type: Schema.Types.ObjectId,
     ref: 'Project',

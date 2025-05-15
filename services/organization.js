@@ -1,5 +1,9 @@
 const Organization = require('../models/organization');
 const userService = require('../services/user');
+const User = require('../models/user');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
 
 const generateUniqueDomain = async (organizationName) => {
     let baseDomain = organizationName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
@@ -15,17 +19,57 @@ const generateUniqueDomain = async (organizationName) => {
     return domain;
   };
 
-const createOrganization = async (organization) => {
-    const newOrganization = new Organization(organization);
-    organization.domain = await generateUniqueDomain(organization.name);
-    try {
-        await newOrganization.save();
-        return newOrganization;
-    } catch (error) {
-        throw new Error('Error creating organization: ' + error.message);
-    }
-}
 
+  const key = "8c12f97e-59b9-4f91-8c3b-441e2a0b7c2a";
+
+  const createOrganization = async (organizationData) => {
+    try {
+      const domain = await generateUniqueDomain(organizationData.organizationName);
+      const hashedPassword = await bcrypt.hash(organizationData.organizationPassword, 10);
+  
+      const headUser = new User({
+        email: organizationData.organizationEmail,
+        username: organizationData.organizationUsername,
+        firstName: organizationData.headFirstName,
+        lastName: organizationData.headLastName,
+        role: 'organization_head',
+        password: hashedPassword,
+        profilePic: organizationData.profilePic ?? "",
+        experience: 0,
+        organization: null 
+      });
+  
+      await headUser.validate(); // this checks everything before save
+  
+      const organization = new Organization({
+        name: organizationData.organizationName,
+        domain,
+        head: headUser._id
+      });
+  
+      await organization.save();
+      headUser.organization = organization._id;
+      await headUser.save();
+  
+      // Create token
+      const token = jwt.sign({ username: headUser.username }, key, { expiresIn: '7d' });
+  
+      return {
+        token,
+        user: {
+          username: headUser.username,
+          role: headUser.role
+        },
+        organization: {
+          domain: organization.domain
+        }
+      };
+  
+    } catch (error) {
+      console.error('Error creating organization:', error);
+      throw new Error('Error creating organization: ' + error.message);
+    }
+  };
 const getOrganizationById = async (organizationId) => {
     try {
         const organization = await Organization.findById(organizationId).populate('users').populate('projects').populate('tasks').populate('notifications');
@@ -96,12 +140,20 @@ const getOrganizationByUsername = async (username) => {
         throw new Error('Error fetching organization: ' + error.message);
     }
 }
-
+const getAllUsersInOrganization = async (domain) => {
+    const organization = await Organization.findOne({ domain });
+    if (!organization) {
+      throw new Error('Organization not found');
+    }
+    const users = await User.find({ organization: organization._id });
+    return users;
+  };
 module.exports = {
     createOrganization,
     getOrganizationById,
     updateOrganization,
     deleteOrganization,
     getOrganizationByDomain,
-    getOrganizationByUsername
+    getOrganizationByUsername,
+    getAllUsersInOrganization
 }
