@@ -7,8 +7,8 @@ const crypto = require('crypto');
 const User = require('../models/user');
 const Task = require('../models/task');
 const Project = require('../models/project');
-const Organization = require('../models/organization');
 const bcrypt = require('bcrypt');
+
 
 async function isSigned(username, password) {
   try {

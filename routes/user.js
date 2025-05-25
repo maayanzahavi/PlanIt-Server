@@ -1,4 +1,6 @@
 const userController = require("../controllers/user");
+const tokenModel = require('../models/token');
+
 
 const express = require('express');
 const router = express.Router();
@@ -8,10 +10,12 @@ router.route('/')
   .post(userController.createUser);
 
 router.route("/:id")
-  .get(userController.getUserById)
-  .put(userController.updateUser)
-  .delete(userController.deleteUser);
+  .get(tokenModel.isLoggedIn, userController.getUserById)
+  .put(tokenModel.isLoggedIn, userController.updateUser)
+  .delete(tokenModel.isLoggedIn, userController.deleteUser);
 
-router.route("/:id/projects")
-  .get(userController.getUserVideos)
-  .post(videoController.createVideo);
+  router.get('/public/:id', userController.getUserById); 
+
+
+
+  module.exports = router;
