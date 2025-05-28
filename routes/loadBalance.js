@@ -3,6 +3,6 @@ const router = express.Router();
 const { runLoadBalancer } = require("../controllers/loadBalance");
 
 router.route("/")
-  .get(runLoadBalancer);
-  
+  .post(runLoadBalancer);
+
 module.exports = router;

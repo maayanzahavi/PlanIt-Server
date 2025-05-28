@@ -3,40 +3,63 @@ const path = require("path");
 const fs = require("fs");
 const Project = require("../models/project"); // Assuming a Project model exists
 
+const formatData = (project, inputPath) => {
+    // Format data for input.json
+    const inputData = {
+        tasks: project.tasks.map(task => ({
+          id: task._id.toString(),
+          skills: task.tags.map(tag => tag.name),
+          type: task.type,
+          weight: task.weight,
+          urgency: task.urgency,
+          assignedTo: task.assignedTo || null
+        })),
+        members: project.team.map(member => ({
+          id: member._id.toString(),
+          skills: member.skills.map(skill => skill.name),
+          preferences: member.preferences,
+          availability: member.availability,
+          experience: member.experience
+        }))
+      };
+  
+      // Write to input.json
+      fs.writeFileSync(inputPath, JSON.stringify(inputData, null, 2));
+    };
+
+const parseAssignments = (project, outputPath) => {
+  try {
+    // Read the output file
+    const data = fs.readFileSync(outputPath, "utf8");
+    const assignments = JSON.parse(data);
+
+    // Update tasks with new assignments
+    project.tasks.forEach(task => {
+      if (assignments[task._id.toString()]) {
+        task.assignedTo = assignments[task._id.toString()];
+      }
+    });
+
+    return project;
+  } catch (err) {
+    console.error(`Error parsing assignments: ${err.message}`);
+    throw new Error("Failed to parse assignments");
+  }
+};
+
 const runLoadBalancer = async (req, res) => {
-  const { projectId } = req.req; // Accept project ID and pre-assignments
+  const { project } = req.body; 
   const scriptPath = path.join(__dirname, "../load_balancing_python/balance_lp.py");
   const inputPath = path.join(__dirname, "../load_balancing_python/input.json");
   const outputPath = path.join(__dirname, "../load_balancing_python/output.json");
 
   try {
-    // Fetch project details
-    const project = await Project.findById(projectId).populate("tasks team"); // Assuming tasks and team are populated
-    if (!project) {
-      return res.status(404).json({ error: "Project not found" });
+    // Validate project object
+    if (!project || !project.tasks || !project.team) {
+      return res.status(400).json({ error: "Invalid project data" });
     }
 
-    // Format data for input.json
-    const inputData = {
-      tasks: project.tasks.map(task => ({
-        id: task._id.toString(),
-        skills: task.tags.map(tag => tag.name), 
-        type: task.type,
-        weight: task.weight,
-        urgency: task.urgency,
-        assignedTo: task.assignedTo || null 
-      })),
-      members: project.team.map(member => ({
-        id: member._id.toString(),
-        skills: member.skills.map(skill => skill.name),
-        preferences: member.preferences,
-        availability: member.availability,
-        experience: member.experience
-      }))
-    };
-
-    // Write to input.json
-    fs.writeFileSync(inputPath, JSON.stringify(inputData, null, 2));
+    formatData(project, inputPath);
 
     // Execute the Python script
     exec(`python3 ${scriptPath}`, (error, stdout, stderr) => {
@@ -49,22 +72,14 @@ const runLoadBalancer = async (req, res) => {
         console.error(`Script error: ${stderr}`);
       }
 
-      // Read the output file
-      fs.readFile(outputPath, "utf8", (err, data) => {
-        if (err) {
-          console.error(`Error reading output file: ${err.message}`);
-          return res.status(500).json({ error: "Failed to read output file" });
-        }
-
-        try {
-          const assignments = JSON.parse(data);
-          console.log("Load balancing assignments:", assignments);
-          res.status(200).json(assignments);
-        } catch (parseError) {
-          console.error(`Error parsing output file: ${parseError.message}`);
-          res.status(500).json({ error: "Failed to parse output file" });
-        }
-      });
+      try {
+        // Use parseAssignments to update the project
+        const updatedProject = parseAssignments(project, outputPath);
+        res.status(200).json(updatedProject);
+      } catch (parseError) {
+        console.error(`Error updating project: ${parseError.message}`);
+        res.status(500).json({ error: "Failed to update project with assignments" });
+      }
     });
   } catch (err) {
     console.error(`Error: ${err.message}`);

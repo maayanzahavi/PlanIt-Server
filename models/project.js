@@ -24,6 +24,12 @@ const ProjectSchema = new Schema({
         ref: 'Task',
         default: []
     }],
+    avaliabilities: {
+        type: Map,
+        keyType: Schema.Types.ObjectId,
+        of: Number,
+        default: {}
+    },
     progress: {
         type: Number,
         default: 0 // Typically a number between 0-100
