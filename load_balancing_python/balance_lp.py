@@ -70,9 +70,13 @@ problem += p.lpSum([
 
 # Each task is assigned to exactly one member
 for task in tasks:
-    problem += sum(variables[(task["id"], member["id"])] for member in members) == 1
+    if task.get("assignedTo"):  # Respect pre-assigned tasks
+        assigned_member = task["assignedTo"]
+        problem += variables[(task["id"], assigned_member)] == 1
+    else:
+        problem += sum(variables[(task["id"], member["id"])] for member in members) == 1
 
-# aEach member can't exceed their availability
+# Each member can't exceed their availability
 for member in members:
     problem += sum(variables[(task["id"], member["id"])] * task["weight"] for task in tasks) <= member["availability"]
 
@@ -81,5 +85,6 @@ problem.solve()
 assignments = parse_solution(variables)
 
 # Write to output file
-with open("output.json", "w") as f:
+output_file_path = "output.json"  # Ensure this matches the API expectations
+with open(output_file_path, "w") as f:
     json.dump(assignments, f)

@@ -7,8 +7,10 @@ async function processLogin(req, res) {
     const username = req.body.username
     const password = req.body.password
     if (await userService.isSigned(username, password) == false) {
+        console.log('Invalid username and/or password')
         res.status(404).json( { error: 'Invalid username and/or password' } )
     } else {
+        console.log('Login successful')
         res.status(201).json( { token: tokenModel.getToken(req) } )
     }
 }
