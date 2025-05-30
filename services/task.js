@@ -6,10 +6,9 @@ const userService = require('./user');
 const projectService = require('./project');
 const Project = require('../models/project');
 
-const createTask = async (task, projectId) => {
+const createTask = async (task) => {
     console.log('Creating task in service:', task);
     const newTask = new Task(task);
-    newTask.project = projectId;
     newTask.comments = [];
     console.log('New task:', newTask);
 

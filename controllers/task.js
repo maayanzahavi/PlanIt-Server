@@ -2,7 +2,7 @@ const taskService = require('../services/task');
 
 const createTask = async (req, res) => {
     try {
-        const task = await taskService.createTask(req.body, req.params.projectId);
+        const task = await taskService.createTask(req.body);
         res.status(201).json(task);
     } catch (error) {
         if (error.name === 'ValidationError') {

@@ -7,19 +7,20 @@ const project = require('../models/project');
 const createProject = async (req, res) => {   
     console.log('Creating project:', req.body);
     const { domain, username } = req.params;
-    console.log('Domain:', domain);
-    console.log('Username:', username);
     const newProject = req.body;
 
-    // Move tasks to a separate variable
-    // and clear the tasks array in the project object
-    const tasks = newProject.tasks || [];
-    console.log('Project tasks:', tasks);
-    console.log('Project members:', project.team);
-    newProject.tasks = [];
+    console.log('Domain:', domain);
+    console.log('Username:', username);
+    console.log('Project tasks:', newProject.tasks);
+    console.log('Project members:', newProject.team);
 
+    // Make project tasks an array of task IDs
+    const tasks = newProject.tasks || [];
+    newProject.tasks = tasks.map(task => task._id);
+
+    // Create project
     try {
-        // Create project
+        // Find manager by username in order to get their ID
         const manager = await userService.getUserByUsername(username);
         if (!manager) {
             return res.status(400).json({ error: 'Manager not found' });
@@ -27,6 +28,7 @@ const createProject = async (req, res) => {
             console.log('Manager found');
         }
         
+        // Find organization by domain in order to get its ID
         const organization = await organizationService.getOrganizationByDomain(domain);
         if (!organization) {
             return res.status(400).json({ error: 'Organization not found' });
@@ -43,34 +45,6 @@ const createProject = async (req, res) => {
             return res.status(400).json({ error: 'Project creation failed' });
         }
         console.log('Project created:', project._id);
-
-        // Create tasks
-        const taskIds = [];
-        if (tasks && tasks.length > 0) {
-            for (const t of tasks) {
-                // Create task
-                console.log('Creating task:', t);
-                const task = await taskService.createTask(t, project._id);
-                if (!task) {
-                    console.log('Task creation failed');
-                    return res.status(400).json({ error: 'Task creation failed' });
-                }
-                console.log('Task created:', task._id);
-
-                // Add task ID to tasks array
-                taskIds.push(task._id);
-                console.log('Task added to project:', task._id);
-                console.log('Project tasks:', project.tasks);
-            }
-        }
-        // Save project with tasks
-        const projectWithTasks = await projectService.addTasksToProject(project, taskIds);
-        if (!projectWithTasks) {
-            console.log('Project update failed');
-            return res.status(400).json({ error: 'Project update failed' });
-        }
-
-        console.log('Project with tasks:', projectWithTasks._id);
         res.status(201).json(projectWithTasks);
 
     } catch (error) {
