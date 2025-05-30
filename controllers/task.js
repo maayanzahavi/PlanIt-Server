@@ -1,13 +1,17 @@
 const taskService = require('../services/task');  
 
 const createTask = async (req, res) => {
+    console.log('Creating task in controller:', req.body);
+    const { domain, username, projectId } = req.params;
     try {
         const task = await taskService.createTask(req.body);
         res.status(201).json(task);
     } catch (error) {
         if (error.name === 'ValidationError') {
+            console.error('Validation error:', error);
             res.status(400).json({ error: error.message });
         } else {
+            console.error('Error creating task:', error);
             res.status(500).json({ error: 'Internal Server Error' });
         }
     }
