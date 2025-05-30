@@ -11,7 +11,7 @@ async function sendResetLink(req, res) {
     await sendResetEmail(email, token);
     res.status(200).send("Reset email sent");
   } catch (err) {
-    console.error("[MAIL ERROR]", err);  // הוספתי לוג חשוב
+    console.error("[MAIL ERROR]", err); 
 
     res.status(500).send("Failed to send reset email");
   }
@@ -19,17 +19,25 @@ async function sendResetLink(req, res) {
 
 async function resetPassword(req, res) {
   const { token, password } = req.body;
-  console.log("Received token:", token);
-
 
   try {
     const decoded = verifyResetToken(token);
     const hashed = await bcrypt.hash(password, 10);
-    await User.findByIdAndUpdate(decoded.id, { password: hashed });
-    res.status(200).send("Password updated");
+    const updatedUser = await User.findByIdAndUpdate(decoded.id, { password: hashed }, { new: true })
+      .populate('organization');
+    
+    if (!updatedUser) return res.status(404).send("User not found");
+
+    res.status(200).json({
+      message: "Password updated",
+      username: updatedUser.username,
+      domain: updatedUser.organization?.domain || ""
+    });
+
   } catch (err) {
     res.status(400).send("Invalid or expired token");
-  }
+  } 
 }
+
 
 module.exports = { sendResetLink, resetPassword };

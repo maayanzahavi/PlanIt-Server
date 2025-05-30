@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 function generateResetToken(userId) {
-  return jwt.sign({ id: userId }, process.env.RESET_SECRET);
+  return jwt.sign({ id: userId }, process.env.RESET_SECRET, { expiresIn: '1h' });
 }
 
 function verifyResetToken(token) {
