@@ -1,6 +1,7 @@
 const { exec } = require("child_process");
 const path = require("path");
 const fs = require("fs");
+const taskService = require("../services/task"); // Assuming a projectService exists
 const Project = require("../models/project"); // Assuming a Project model exists
 
 const formatData = (project, inputPath) => {
@@ -28,19 +29,20 @@ const formatData = (project, inputPath) => {
       fs.writeFileSync(inputPath, JSON.stringify(inputData, null, 2));
     };
 
-const parseAssignments = (project, outputPath) => {
+const parseAssignments = async (project, outputPath) => {
   try {
     // Read the output file
     const data = fs.readFileSync(outputPath, "utf8");
     const assignments = JSON.parse(data);
 
     // Update tasks with new assignments
-    project.tasks.forEach(task => {
+    project.tasks.forEach(async task => {
       if (assignments[task._id.toString()]) {
         task.assignedTo = assignments[task._id.toString()];
+        await taskService.updateTask(task._id, { assignedTo: task });
       }
     });
-
+    console.log("Assignments updated in project:", project);
     return project;
   } catch (err) {
     console.error(`Error parsing assignments: ${err.message}`);
@@ -66,7 +68,7 @@ const runLoadBalancer = async (req, res) => {
     formatData(project, inputPath);
 
     // Execute the Python script
-    exec(`python3 ${scriptPath}`, (error, stdout, stderr) => {
+    exec(`python3 ${scriptPath}`, async (error, stdout, stderr) => {
       if (error) {
         console.error(`Error executing script: ${error.message}`);
         return res.status(500).json({ error: "Failed to execute load balancing algorithm" });
@@ -79,7 +81,7 @@ const runLoadBalancer = async (req, res) => {
       try {
         // Use parseAssignments to update the project 
         // and return the project with updates task assignments
-        const updatedProject = parseAssignments(project, outputPath);
+        const updatedProject = await parseAssignments(project, outputPath);
         res.status(200).json(updatedProject);
       } catch (parseError) {
         console.error(`Error updating project: ${parseError.message}`);
