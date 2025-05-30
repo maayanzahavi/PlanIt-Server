@@ -12,6 +12,8 @@ const tokens = require('./routes/token');
 const skill = require('./routes/skill');
 const user = require('./routes/user');
 const passwordRoutes = require('./routes/password');
+const aiRoutes = require('./routes/ai');
+
 
 
 // Middleware
@@ -25,6 +27,8 @@ app.use('/api/tokens', tokens);
 app.use('/api/skills', skill);
 app.use('/api/users', user);
 app.use('/api', passwordRoutes);
+app.use('/api/ai', aiRoutes);
+
 
 
 // Connect to MongoDB
