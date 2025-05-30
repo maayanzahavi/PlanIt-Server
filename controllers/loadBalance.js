@@ -12,13 +12,14 @@ const formatData = (project, inputPath) => {
           type: task.type,
           weight: task.weight,
           urgency: task.urgency,
-          assignedTo: task.assignedTo || null
+          assignedTo: task.assignedTo || null,
+          availabilities: project.availabilities || {} // Include task-specific availabilities
         })),
         members: project.team.map(member => ({
           id: member._id.toString(),
           skills: member.skills.map(skill => skill.name),
           preferences: member.preferences,
-          availability: member.availability,
+          availability: (project.avaliabilites && project.avaliabilites[member._id.toString()]) || 0, // Fallback to 0 if undefined
           experience: member.experience
         }))
       };
@@ -48,10 +49,13 @@ const parseAssignments = (project, outputPath) => {
 };
 
 const runLoadBalancer = async (req, res) => {
-  const { project } = req.body; 
+  console.log("Request body:", req.body);
+  const project = req.body; 
   const scriptPath = path.join(__dirname, "../load_balancing_python/balance_lp.py");
   const inputPath = path.join(__dirname, "../load_balancing_python/input.json");
   const outputPath = path.join(__dirname, "../load_balancing_python/output.json");
+
+  console.log("Running load balancer with project:", project);
 
   try {
     // Validate project object
@@ -73,7 +77,8 @@ const runLoadBalancer = async (req, res) => {
       }
 
       try {
-        // Use parseAssignments to update the project
+        // Use parseAssignments to update the project 
+        // and return the project with updates task assignments
         const updatedProject = parseAssignments(project, outputPath);
         res.status(200).json(updatedProject);
       } catch (parseError) {
