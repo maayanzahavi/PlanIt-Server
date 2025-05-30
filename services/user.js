@@ -258,6 +258,20 @@ const removeTaskFromUser = async (taskId) => {
     }
 }
 
+const getTeamMembers = async (managerUsername) => {
+  try {
+    const manager = await User.findOne({ username: managerUsername });
+    if (!manager) throw new Error('Manager not found');
+
+    const teamMembers = await User.find({ manager: manager._id });
+    return teamMembers;
+  } catch (error) {
+    console.error("Error in getTeamMembers service:", error);
+    throw new Error('Error fetching team members: ' + error.message);
+  }
+};
+
+
 module.exports = {
     isSigned,
     createTeamManager,
@@ -268,5 +282,6 @@ module.exports = {
     updateUser,
     deleteUser,
     removeProjectFromUsers,
-    removeTaskFromUser
+    removeTaskFromUser,
+    getTeamMembers,
 }
