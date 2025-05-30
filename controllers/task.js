@@ -39,13 +39,16 @@ const getTaskById = async (req, res) => {
 }
 
 const updateTask = async (req, res) => {
+    console.log('Updating task in controller:', req.params.taskId, req.body);
     try {
         const task = await taskService.updateTask(req.params.taskId, req.body);
         res.status(200).json(task);
     } catch (error) {
         if (error.message === 'Task not found') {
+            console.log('Task not found:', req.params.taskId);
             res.status(404).json({ error: error.message });
         } else {
+            console.error('Error updating task:', error);
             res.status(500).json({ error: 'Internal Server Error' });
         }
     }

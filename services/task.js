@@ -24,7 +24,7 @@ const createTask = async (task) => {
 const getTaskById = async (taskId) => {
     console.log('Getting task by ID in service:', taskId);
     try {
-        const task = await Task.findById(taskId).populate('project').populate('tags').populate('assignedTo').populate('comments');
+        const task = await Task.findById(taskId).populate('tags').populate('assignedTo').populate('comments');
         if (!task) {
             console.log('Task not found');
             throw new Error('Task not found');
@@ -38,14 +38,16 @@ const getTaskById = async (taskId) => {
 }
 
 const updateTask = async (taskId, taskData) => {
+    console.log('Updating task in service:', taskId, taskData);
     try {
-        const updatedTask = await Task.findByIdAndUpdate(taskId, taskData, { new: true }).populate('project').populate('assignedTo').populate('tags').populate('comments');
+        const updatedTask = await Task.findByIdAndUpdate(taskId, taskData, { new: true }).populate('assignedTo').populate('tags').populate('comments');
         if (!updatedTask) {
             throw new Error('Task not found');
         }
         return updatedTask;
     }
     catch (error) {
+        console.error('Error updating task:', error);
         throw new Error('Error updating task: ' + error.message);
     }
 }
@@ -87,7 +89,7 @@ const deleteTask = async (taskId) => {
 
 const getProjectTasks = async (projectId) => {
     try {
-        const tasks = await Task.find({ project: projectId }).populate('project').populate('assignedTo');
+        const tasks = await Task.find({ project: projectId }).populate('assignedTo');
         return tasks;
     } catch (error) {
         throw new Error('Error fetching tasks: ' + error.message);
@@ -98,7 +100,7 @@ const getProjectTasks = async (projectId) => {
 const changeTaskStatus = async (taskId, status) => {
     console.log('Changing task status in service:', taskId, status);
     try {
-        const updatedTask = await Task.findByIdAndUpdate(taskId, { status }, { new: true }).populate('project').populate('assignedTo').populate('tags').populate('comments');
+        const updatedTask = await Task.findByIdAndUpdate(taskId, { status }, { new: true }).populate('assignedTo').populate('tags').populate('comments');
         if (!updatedTask) {
             throw new Error('Task not found');
         }
