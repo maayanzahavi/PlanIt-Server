@@ -1,21 +1,27 @@
 const User = require('../models/user');
-const bcrypt = require('bcrypt');
 const { sendResetEmail } = require('../services/email');
-const { generateResetToken, verifyResetToken } = require('../services/token');
+const { generateResetToken } = require('../services/token');
 
 async function sendResetLink(req, res) {
-  const { userId, email } = req.body;
+  const { email } = req.body;
 
   try {
-    const token = generateResetToken(userId);
-    await sendResetEmail(email, token);
-    res.status(200).send("Reset email sent");
-  } catch (err) {
-    console.error("[MAIL ERROR]", err); 
+   const user = await User.findOne({ email });
 
-    res.status(500).send("Failed to send reset email");
+    if (!user) {
+      return res.status(404).json({ message: 'No user with that email exists.' });
+    }
+
+    const token = generateResetToken(user._id); 
+    await sendResetEmail(email, token);
+
+    res.status(200).json({ message: 'A password reset link has been sent to your email.' });
+  } catch (err) {
+    console.error('[MAIL ERROR]', err);
+    res.status(500).json({ message: 'Failed to send reset email' });
   }
 }
+
 
 async function resetPassword(req, res) {
   const { token, password } = req.body;
