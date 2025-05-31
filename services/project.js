@@ -33,7 +33,7 @@ const getProjectById = async (projectId) => {
 }
 
 const updateProject = async (projectId, project) => {    
-    console.log('Updating project in service:', projectId); 
+    console.log('Updating project in service:', project); 
 
     try {
         const updatedProject = await Project.findByIdAndUpdate(projectId, project, { new: true }).populate('manager').populate('team').populate('tasks');

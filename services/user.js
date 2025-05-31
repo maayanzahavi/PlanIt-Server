@@ -11,11 +11,13 @@ const bcrypt = require('bcrypt');
 
 
 async function isSigned(username, password) {
+  console.log("Checking if user is signed in with username:", username);
   try {
     const user = await User.findOne({ username });
     if (!user) return false;
-
+    console.log("User found:", user);
     const passwordMatch = await bcrypt.compare(password, user.password);
+    console.log("Password match:", passwordMatch);
     return passwordMatch;
   } catch (error) {
     console.error("Error in isSigned:", error);

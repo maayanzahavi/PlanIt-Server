@@ -1,41 +1,44 @@
 {
   "tasks": [
     {
-      "id": "T1",
-      "skills": ["React"],
-      "type": "Frontend",
-      "weight": 2,
-      "urgency": 3  
+      "id": "683ae5f15dc03a68c245bd0e",
+      "skills": [
+        null
+      ],
+      "assignedTo": null,
+      "availabilities": {}
     },
     {
-      "id": "T2",
-      "skills": ["Node.js"],
-      "type": "Backend",
-      "weight": 2,
-      "urgency": 5
-    },
-    {
-      "id": "T3",
-      "skills": ["Python"],
-      "type": "Data",
-      "weight": 3,
-      "urgency": 1
+      "id": "683ae5fc5dc03a68c245bd12",
+      "skills": [
+        null,
+        null
+      ],
+      "assignedTo": null,
+      "availabilities": {}
     }
   ],
   "members": [
     {
-      "id": "A",
-      "skills": ["React", "Node.js"],
-      "preferences": ["Frontend"],
-      "availability": 4,
-      "experience": 5
+      "id": "680e1e6462b65a41d18d9027",
+      "skills": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "preferences": [],
+      "availability": 10,
+      "experience": 4
     },
     {
-      "id": "B",
-      "skills": ["Node.js", "Python"],
-      "preferences": ["Backend"],
-      "availability": 5,
-      "experience": 1
+      "id": "680e1e6462b65a41d18d9026",
+      "skills": [
+        null
+      ],
+      "preferences": [],
+      "availability": 10,
+      "experience": 2
     }
   ]
 }

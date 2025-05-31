@@ -1,0 +1,41 @@
+{
+  "tasks": [
+    {
+      "id": "T1",
+      "skills": ["React"],
+      "type": "Frontend",
+      "weight": 2,
+      "urgency": 3  
+    },
+    {
+      "id": "T2",
+      "skills": ["Node.js"],
+      "type": "Backend",
+      "weight": 2,
+      "urgency": 5
+    },
+    {
+      "id": "T3",
+      "skills": ["Python"],
+      "type": "Data",
+      "weight": 3,
+      "urgency": 1
+    }
+  ],
+  "members": [
+    {
+      "id": "A",
+      "skills": ["React", "Node.js"],
+      "preferences": ["Frontend"],
+      "availability": 4,
+      "experience": 5
+    },
+    {
+      "id": "B",
+      "skills": ["Node.js", "Python"],
+      "preferences": ["Backend"],
+      "availability": 5,
+      "experience": 1
+    }
+  ]
+}

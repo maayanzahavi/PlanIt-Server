@@ -9,11 +9,6 @@ const TaskSchema = new Schema({
     description: {
         type: String
     },
-    project: {
-        type: Schema.Types.ObjectId,
-        ref: 'Project',
-        required: true
-    },
     tags: [{
         type: Schema.Types.ObjectId,
         ref: 'Skill',
