@@ -45,7 +45,7 @@ const createProject = async (req, res) => {
             return res.status(400).json({ error: 'Project creation failed' });
         }
         console.log('Project created:', project._id);
-        res.status(201).json(projectWithTasks);
+        res.status(201).json(project);
 
     } catch (error) {
         if (error.name === 'ValidationError') {

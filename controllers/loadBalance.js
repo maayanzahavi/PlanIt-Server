@@ -2,7 +2,7 @@ const { exec } = require("child_process");
 const path = require("path");
 const fs = require("fs");
 const taskService = require("../services/task"); // Assuming a projectService exists
-const Project = require("../models/project"); // Assuming a Project model exists
+const projectService = require("../services/project"); // Assuming a projectService exists
 
 const formatData = (project, inputPath) => {
     // Format data for input.json
@@ -52,6 +52,7 @@ const parseAssignments = async (project, outputPath) => {
 
 const runLoadBalancer = async (req, res) => {
   console.log("Request body:", req.body);
+  const projectId = req.params.projectId;
   const project = req.body; 
   const scriptPath = path.join(__dirname, "../load_balancing_python/balance_lp.py");
   const inputPath = path.join(__dirname, "../load_balancing_python/input.json");
@@ -82,7 +83,9 @@ const runLoadBalancer = async (req, res) => {
         // Use parseAssignments to update the project 
         // and return the project with updates task assignments
         const updatedProject = await parseAssignments(project, outputPath);
-        res.status(200).json(updatedProject);
+        console.log("Updated project with assignments:", updatedProject);
+        const finalProject = await projectService.updateProject(projectId, updatedProject);
+        res.status(200).json(finalProject);
       } catch (parseError) {
         console.error(`Error updating project: ${parseError.message}`);
         res.status(500).json({ error: "Failed to update project with assignments" });
