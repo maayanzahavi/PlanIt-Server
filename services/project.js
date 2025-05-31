@@ -22,7 +22,13 @@ const createProject = async (project , organizationId, managerId) => {
 
 const getProjectById = async (projectId) => {
     try {
-        const project = await Project.findById(projectId).populate('manager').populate('team').populate('tasks');
+        const project = await Project.findById(projectId)
+            .populate('manager')
+            .populate('team')
+            .populate({
+                path: 'tasks',
+                populate: { path: 'assignedTo' }
+            });
         if (!project) {
             throw new Error('Project not found');
         }       
@@ -36,7 +42,13 @@ const updateProject = async (projectId, project) => {
     console.log('Updating project in service:', project); 
 
     try {
-        const updatedProject = await Project.findByIdAndUpdate(projectId, project, { new: true }).populate('manager').populate('team').populate('tasks');
+        const updatedProject = await Project.findByIdAndUpdate(projectId, project, { new: true })
+            .populate('manager')
+            .populate('team')
+            .populate({
+                path: 'tasks',
+                populate: { path: 'assignedTo' }
+            });
         if (!updatedProject) {     
             console.log('Project not found');
             throw new Error('Project not found');
