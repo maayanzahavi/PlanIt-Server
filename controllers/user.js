@@ -134,6 +134,16 @@ const deleteUser = async (req, res) => {
     }
 };
 
+const getTeamMembers = async (req, res) => {
+    try {
+      const teamMembers = await userService.getTeamMembers(req.params.username);
+      res.json(teamMembers);
+    } catch (error) {
+      console.error("Error in getTeamMembers controller:", error);
+      res.status(500).json({ message: error.message });
+    }
+  };
+
 module.exports = {
     createTeamManager,
     createTeamMember,
@@ -141,5 +151,6 @@ module.exports = {
     getUserById,
     getUserByUsername,
     updateUser,
-    deleteUser
+    deleteUser,     
+    getTeamMembers,
 };

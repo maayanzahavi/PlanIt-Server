@@ -32,6 +32,7 @@ router.route("/:domain/users/:username")
 
 router.route("/:domain/users/:username/team")
   .post(tokenModel.isLoggedIn, userController.createTeamMember)
+  .get(tokenModel.isLoggedIn, userController.getTeamMembers)
 
 // Projects
 router.route("/:domain/users/:username/projects")

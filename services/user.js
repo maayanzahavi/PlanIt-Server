@@ -7,8 +7,8 @@ const crypto = require('crypto');
 const User = require('../models/user');
 const Task = require('../models/task');
 const Project = require('../models/project');
-const Organization = require('../models/organization');
 const bcrypt = require('bcrypt');
+
 
 async function isSigned(username, password) {
   try {
@@ -258,6 +258,20 @@ const removeTaskFromUser = async (taskId) => {
     }
 }
 
+const getTeamMembers = async (req, res) => {
+  try {
+    const manager = await User.findOne({ username: req.params.username });
+    if (!manager) return res.status(404).json({ message: 'Manager not found' });
+
+    const teamMembers = await User.find({ manager: manager._id });
+    res.json(teamMembers);
+  } catch (error) {
+    console.error("Error fetching team members:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+
 module.exports = {
     isSigned,
     createTeamManager,
@@ -268,5 +282,6 @@ module.exports = {
     updateUser,
     deleteUser,
     removeProjectFromUsers,
-    removeTaskFromUser
+    removeTaskFromUser,
+    getTeamMembers,
 }
