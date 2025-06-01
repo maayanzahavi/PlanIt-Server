@@ -31,7 +31,10 @@ const getProjectById = async (projectId) => {
             .populate('team')
             .populate({
                 path: 'tasks',
-                populate: { path: 'assignedTo' }
+                populate: [
+                    { path: 'assignedTo' },
+                    { path: 'tags' }
+                ]
             });
         if (!project) {
             throw new Error('Project not found');
@@ -51,7 +54,10 @@ const updateProject = async (projectId, project) => {
             .populate('team')
             .populate({
                 path: 'tasks',
-                populate: { path: 'assignedTo' }
+                populate: [
+                    { path: 'assignedTo' },
+                    { path: 'tags' }
+                ]
             });
         if (!updatedProject) {     
             console.log('Project not found');
@@ -99,7 +105,20 @@ const addTasksToProject = async (project, tasks) => {
     console.log('Adding tasks to project in service:', project._id);
     console.log('Tasks:', tasks);
     try {
-        const updatedProject = await Project.findByIdAndUpdate(project._id, { $push: { tasks: { $each: tasks } } }, { new: true }).populate('manager').populate('team').populate('tasks');
+        const updatedProject = await Project.findByIdAndUpdate(
+            project._id, 
+            { $push: { tasks: { $each: tasks } } }, 
+            { new: true }
+        )
+        .populate('manager')
+        .populate('team')
+        .populate({
+            path: 'tasks',
+            populate: [
+                { path: 'assignedTo' },
+                { path: 'tags' }
+            ]
+        });
         if (!updatedProject) {
             console.log('Project not found');
             throw new Error('Project not found');
@@ -163,7 +182,7 @@ const addProjectToTasks = async (projectId, tasks) => {
             }
         
             task.project = projectId;
-            return await task.save(); // או updateTask אם אתה חייב את ההשלמות
+            return await task.save();
         }));
         
         console.log('Updated tasks with project:', updatedTasks);

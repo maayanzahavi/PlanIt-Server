@@ -90,7 +90,9 @@ const deleteTask = async (taskId) => {
 
 const getProjectTasks = async (projectId) => {
     try {
-        const tasks = await Task.find({ project: projectId }).populate('assignedTo');
+        const tasks = await Task.find({ project: projectId })
+            .populate('assignedTo')
+            .populate('tags');
         return tasks;
     } catch (error) {
         throw new Error('Error fetching tasks: ' + error.message);

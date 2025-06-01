@@ -1,16 +1,9 @@
 {
   "tasks": [
     {
-      "id": "683b0cf229d65f6f197ef0e7",
+      "id": "683c7fb2b23e4d5ca1113949",
       "skills": [
-        null
-      ],
-      "assignedTo": null,
-      "availabilities": {}
-    },
-    {
-      "id": "683b0f4146d0e1bebcd2f7d5",
-      "skills": [
+        null,
         null
       ],
       "assignedTo": null,
@@ -18,6 +11,18 @@
     }
   ],
   "members": [
+    {
+      "id": "680e1e6462b65a41d18d9027",
+      "skills": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "preferences": [],
+      "availability": 10,
+      "experience": 4
+    },
     {
       "id": "683af179e9485732c0800697",
       "skills": [],

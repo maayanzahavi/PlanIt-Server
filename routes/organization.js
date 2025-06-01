@@ -59,10 +59,10 @@ router.route("/:domain/users/:username/projects/:projectId/tasks/:taskId/status"
   .put(tokenModel.isLoggedIn, taskController.changeTaskStatus);
 
 // Task Comments
-router.route("/:domain/users/:username/projects/:projectId/tasks/:taskId/comments")
+router.route("/:domain/users/:username/tasks/:taskId/comments")
   .post(tokenModel.isLoggedIn, taskCommentController.createTaskComment);
 
-router.route("/:domain/users/:username/projects/:projectId/tasks/:taskId/comments/:commentId")
+router.route("/:domain/users/:username/tasks/:taskId/comments/:commentId")
   .delete(tokenModel.isLoggedIn, taskCommentController.deleteTaskComment);
 
 module.exports = router;
