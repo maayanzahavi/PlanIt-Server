@@ -13,6 +13,8 @@ const createProject = async (project , organizationId, managerId) => {
     
     try {
         await newProject.save();
+        // Add the project ID as a field to all its tasks
+        await taskService.addTasksToProject(newProject._id, project.tasks || []);
         return newProject;
     } catch (error) {
         console.error('Error creating project in service:', error);
@@ -22,7 +24,13 @@ const createProject = async (project , organizationId, managerId) => {
 
 const getProjectById = async (projectId) => {
     try {
-        const project = await Project.findById(projectId).populate('manager').populate('team').populate('tasks');
+        const project = await Project.findById(projectId)
+            .populate('manager')
+            .populate('team')
+            .populate({
+                path: 'tasks',
+                populate: { path: 'assignedTo' }
+            });
         if (!project) {
             throw new Error('Project not found');
         }       
@@ -36,7 +44,13 @@ const updateProject = async (projectId, project) => {
     console.log('Updating project in service:', project); 
 
     try {
-        const updatedProject = await Project.findByIdAndUpdate(projectId, project, { new: true }).populate('manager').populate('team').populate('tasks');
+        const updatedProject = await Project.findByIdAndUpdate(projectId, project, { new: true })
+            .populate('manager')
+            .populate('team')
+            .populate({
+                path: 'tasks',
+                populate: { path: 'assignedTo' }
+            });
         if (!updatedProject) {     
             console.log('Project not found');
             throw new Error('Project not found');
@@ -112,11 +126,35 @@ const removeTaskFromProject = async (projectId, taskId) => {
     }
 }
 
+const updateProjectProgress = async (projectId) => {
+    try {
+        const project = await Project.findById(projectId).populate('tasks');
+        if (!project) {
+            throw new Error('Project not found');
+        }
+
+        const totalTasks = project.tasks.length;
+        if (totalTasks === 0) {
+            project.progress = 0;
+        } else {
+            const completedTasks = project.tasks.filter(task => task.status === 'Done').length;
+            project.progress = Math.round((completedTasks / totalTasks) * 100);
+        }
+
+        await project.save();
+        return project;
+    } catch (error) {
+        console.error('Error updating project progress:', error);
+        throw new Error('Error updating project progress: ' + error.message);
+    }
+}
+
 module.exports = {
     createProject,
     getProjectById,
     updateProject,
     deleteProject,
     addTasksToProject,
-    removeTaskFromProject
+    removeTaskFromProject,
+    updateProjectProgress
 };
