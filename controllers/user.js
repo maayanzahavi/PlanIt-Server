@@ -136,7 +136,9 @@ const deleteUser = async (req, res) => {
 
 const getTeamMembers = async (req, res) => {
     try {
-      const teamMembers = await userService.getTeamMembers(req.params.username);
+        console.log(`getTeamMembers called with username: ${req.params.username}`);
+
+        const teamMembers = await userService.getTeamMembers(req.params.username);
       res.json(teamMembers);
     } catch (error) {
       console.error("Error in getTeamMembers controller:", error);

@@ -260,18 +260,19 @@ const removeTaskFromUser = async (taskId) => {
     }
 }
 
-const getTeamMembers = async (req, res) => {
+const getTeamMembers = async (username) => {
   try {
-    const manager = await User.findOne({ username: req.params.username });
-    if (!manager) return res.status(404).json({ message: 'Manager not found' });
+    const manager = await User.findOne({ username });
+    if (!manager) throw new Error('Manager not found');
 
     const teamMembers = await User.find({ manager: manager._id });
-    res.json(teamMembers);
+    return teamMembers;
   } catch (error) {
     console.error("Error fetching team members:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    throw error;
   }
 };
+
 
 
 module.exports = {

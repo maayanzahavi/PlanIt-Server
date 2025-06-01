@@ -1,6 +1,8 @@
+const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const { sendResetEmail } = require('../services/email');
-const { generateResetToken } = require('../services/token');
+const { generateResetToken, verifyResetToken } = require('../services/token'); 
+
 
 async function sendResetLink(req, res) {
   const { email } = req.body;
@@ -41,7 +43,8 @@ async function resetPassword(req, res) {
     });
 
   } catch (err) {
-    res.status(400).send("Invalid or expired token");
+    return res.status(400).json({ message: "Invalid or expired token" });
+
   } 
 }
 
