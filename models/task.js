@@ -29,6 +29,11 @@ const TaskSchema = new Schema({
         ref: 'TaskComment',
         default: []
     }],
+    project: {
+        type: Schema.Types.ObjectId,
+        ref: 'Project',
+        required: true
+    },
     status: {
         type: String,
         enum: ['To Do', 'In Progress', 'Done'],

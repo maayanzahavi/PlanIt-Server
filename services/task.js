@@ -100,15 +100,42 @@ const getProjectTasks = async (projectId) => {
 const changeTaskStatus = async (taskId, status) => {
     console.log('Changing task status in service:', taskId, status);
     try {
-        const updatedTask = await Task.findByIdAndUpdate(taskId, { status }, { new: true }).populate('assignedTo').populate('tags').populate('comments');
+        const updatedTask = await Task.findByIdAndUpdate(
+            taskId, 
+            { status }, 
+            { new: true }
+        ).populate('assignedTo').populate('tags').populate('comments');
+        
         if (!updatedTask) {
             throw new Error('Task not found');
         }
+
+        // Update project progress after task status change
+        if (updatedTask.project) {
+            await projectService.updateProjectProgress(updatedTask.project);
+        }
+
         return updatedTask;
     }
     catch (error) {
         console.error('Error updating task status:', error);
         throw new Error('Error updating task status: ' + error.message);
+    }
+}
+
+const addProjectToTasks = async (projectId, tasks) => {
+    console.log('Adding project to tasks in service:', projectId);
+    console.log('Tasks:', tasks);
+    try {
+        const updatedTasks = await Promise.all(tasks.map(async (task) => {
+            task.project = projectId;
+            return await taskService.updateTask(task._id, task);
+        }));
+        console.log('Updated tasks with project:', updatedTasks);
+        return updatedTasks;
+    } catch (error) {
+        console.error('Error adding project to tasks:', error);
+        throw new Error('Error adding project to tasks: ' + error.message);
     }
 }
 
@@ -118,5 +145,6 @@ module.exports = {
     updateTask,
     deleteTask,
     getProjectTasks,
-    changeTaskStatus
+    changeTaskStatus,
+    addProjectToTasks
 }
