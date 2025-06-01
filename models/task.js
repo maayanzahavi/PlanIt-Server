@@ -31,8 +31,7 @@ const TaskSchema = new Schema({
     }],
     project: {
         type: Schema.Types.ObjectId,
-        ref: 'Project',
-        required: true
+        ref: 'Project'
     },
     status: {
         type: String,

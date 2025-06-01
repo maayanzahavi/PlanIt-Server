@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 const Task = require('../models/task');
-const Skill = require('../models/skill');
-const TaskComment = require('../models/taskComment');   
 const userService = require('./user');
 const projectService = require('./project');
 const Project = require('../models/project');
+require('../models/skill');
+require('../models/taskComment');   
 
 const createTask = async (task) => {
     console.log('Creating task in service:', task);
@@ -14,7 +14,8 @@ const createTask = async (task) => {
 
     try {
         await newTask.save();
-        return newTask;
+        const populatedTask = await Task.findById(newTask._id).populate('tags');
+        return populatedTask;
     } catch (error) {
         console.error('Error creating task in service:', error);
         throw new Error('Error creating task: ' + error.message);
