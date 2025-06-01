@@ -73,10 +73,6 @@ async function isSigned(username, password) {
     }
   };
   
-  
-  
-
-
 const createTeamMember = async (userData, organizationId, creatorId) => {
     try {
       console.log("Creating team member with data:", userData);

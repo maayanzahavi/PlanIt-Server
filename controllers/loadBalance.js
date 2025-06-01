@@ -34,12 +34,14 @@ const parseAssignments = async (project, outputPath) => {
     // Read the output file
     const data = fs.readFileSync(outputPath, "utf8");
     const assignments = JSON.parse(data);
+    console.log("Assignments from output file:", assignments);
 
     // Update tasks with new assignments
     project.tasks.forEach(async task => {
-      if (assignments[task._id.toString()]) {
-        task.assignedTo = assignments[task._id.toString()];
-        await taskService.updateTask(task._id, { assignedTo: task });
+      const assignedUserId = assignments[task._id.toString()];
+      if (assignedUserId) {
+        task.assignedTo = assignedUserId; // Correctly assign the user ID
+        await taskService.updateTask(task._id, { assignedTo: assignedUserId }); // Pass the user ID to updateTask
       }
     });
     console.log("Assignments updated in project:", project);
