@@ -1,6 +1,6 @@
 const Project = require('../models/project');  
 const userService = require('./user');
-const taskService = require('./task');
+const Task = require('../models/task');
 const taskCommentService = require('./taskComment');
 
 
@@ -13,8 +13,10 @@ const createProject = async (project , organizationId, managerId) => {
     
     try {
         await newProject.save();
-        // Add the project ID as a field to all its tasks
-        await taskService.addTasksToProject(newProject._id, project.tasks || []);
+        // Change addTasksToProject to addProjectToTasks
+        if (project.tasks && project.tasks.length > 0) {
+            await addProjectToTasks(newProject._id, project.tasks);
+        }
         return newProject;
     } catch (error) {
         console.error('Error creating project in service:', error);
@@ -148,6 +150,30 @@ const updateProjectProgress = async (projectId) => {
         throw new Error('Error updating project progress: ' + error.message);
     }
 }
+
+const addProjectToTasks = async (projectId, tasks) => {
+    console.log('Adding project to tasks in service:', projectId);
+    console.log('Tasks:', tasks);
+    try {
+        const updatedTasks = await Promise.all(tasks.map(async (taskId) => {
+            const task = await Task.findById(taskId);
+            if (!task) {
+              console.warn(`Task not found: ${taskId}`);
+              return null;
+            }
+        
+            task.project = projectId;
+            return await task.save(); // או updateTask אם אתה חייב את ההשלמות
+        }));
+        
+        console.log('Updated tasks with project:', updatedTasks);
+        return updatedTasks;
+    } catch (error) {
+        console.error('Error adding project to tasks:', error);
+        throw new Error('Error adding project to tasks: ' + error.message);
+    }
+}
+
 
 module.exports = {
     createProject,
