@@ -73,16 +73,32 @@ async function isSigned(username, password) {
     }
   };
   
-const createTeamMember = async (userData, organizationId, creatorId) => {
+  const Skill = require('../models/skill'); 
+
+  const createTeamMember = async (userData, organizationId, creatorId) => {
     try {
       console.log("Creating team member with data:", userData);
-      const rawPassword = userData.password && userData.password.trim() !== "" 
-      ? userData.password 
-      : "As1234";
-    
-    const hashedPassword = await bcrypt.hash(rawPassword, 10);
-    
-
+  
+      const rawPassword = userData.password && userData.password.trim() !== ""
+        ? userData.password
+        : "As1234";
+      const hashedPassword = await bcrypt.hash(rawPassword, 10);
+  
+      // Normalize labels
+      const normalize = (arr) =>
+        (arr || []).map(s => typeof s === 'string' ? s : s.label).filter(Boolean);
+  
+      const skillLabelsArray = normalize(userData.skills);
+      const preferenceLabelsArray = normalize(userData.preferences);
+      const allLabels = [...new Set([...skillLabelsArray, ...preferenceLabelsArray])];
+  
+      const allSkills = await getOrCreateSkillsByLabels(allLabels);
+      const skillLabels = new Set(skillLabelsArray);
+      const preferenceLabels = new Set(preferenceLabelsArray);
+  
+      const skillDocs = allSkills.filter(s => skillLabels.has(s.label));
+      const preferenceDocs = allSkills.filter(s => preferenceLabels.has(s.label));
+  
       const newUser = new User({
         email: userData.email,
         username: userData.username,
@@ -93,34 +109,33 @@ const createTeamMember = async (userData, organizationId, creatorId) => {
         profilePic: userData.profilePic ?? "",
         experience: 0,
         organization: organizationId,
-        skills: [],
-        projects: [],
+        skills: skillDocs.map(doc => doc._id),
+        preferences: preferenceDocs.map(doc => doc._id),
         tasks: [],
         notifications: [],
-        preferences: [],
         manager: creatorId,
       });
-
+  
       await newUser.save();
       console.log("Saved team member user:", newUser);
-
+  
       if (creatorId) {
-        const result = await User.findByIdAndUpdate(
+        await User.findByIdAndUpdate(
           creatorId,
-          { $addToSet: { team: newUser._id } }, 
+          { $addToSet: { team: newUser._id } },
           { new: true }
-        ).populate('team'); 
-      } else {
-        console.warn("No creatorId provided — team not updated.");
+        ).populate('team');
       }
-
+  
       return newUser;
     } catch (error) {
-      console.error("Error in createTeamManager service:", error);
-      throw new Error('Error creating manager user: ' + error.message);
+      console.error("Error in createTeamMember service:", error);
+      throw new Error('Error creating team member: ' + error.message);
     }
-}
+  };
+  
 
+  
 const createUser = async (user) => {
     const newUser = new User(user);
     try {
