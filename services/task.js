@@ -2,9 +2,11 @@ const mongoose = require('mongoose');
 const Task = require('../models/task');
 const userService = require('./user');
 const projectService = require('./project');
+const notificationService = require('./notification');
 const Project = require('../models/project');
 require('../models/skill');
 require('../models/taskComment');   
+const { io } = require('../server');
 
 const createTask = async (task) => {
     console.log('Creating task in service:', task);
@@ -118,6 +120,12 @@ const changeTaskStatus = async (taskId, status) => {
             await projectService.updateProjectProgress(updatedTask.project);
         }
 
+        // Notify manager about task status change
+        await notificationService.handleNewNotification(
+            updatedTask.assignedTo.manager, 
+            `Task ${updatedTask.title} status changed to ${status}`
+        );
+        
         return updatedTask;
     }
     catch (error) {
