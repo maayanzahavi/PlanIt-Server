@@ -134,11 +134,39 @@ const changeTaskStatus = async (taskId, status) => {
     }
 }
 
+const assignTaskToUser = async (taskId, userId) => {
+    console.log('Assigning task to user in service:', taskId, userId);
+    try {
+        const task = await Task.findById(taskId);
+        if (!task) {
+            throw new Error('Task not found');
+        }
+        const user = await userService.getUserById(userId);
+        if (!user) {
+            throw new Error('User not found');
+        }
+        task.assignedTo = userId;
+        await task.save();
+
+        // Notify user about task assignment
+        await notificationService.handleNewNotification(
+            userId, 
+            `You have been assigned a new task: ${task.title}`
+        );
+        return task;
+    }
+    catch (error) {
+        console.error('Error assigning task to user:', error);
+        throw new Error('Error assigning task: ' + error.message);
+    }
+}
+
 module.exports = {
     createTask,
     getTaskById,
     updateTask,
     deleteTask,
     getProjectTasks,
-    changeTaskStatus
+    changeTaskStatus,
+    assignTaskToUser
 }

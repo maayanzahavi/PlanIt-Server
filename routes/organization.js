@@ -4,6 +4,7 @@ const projectController = require('../controllers/project');
 const taskController = require('../controllers/task');
 const tokenModel = require('../models/token');
 const taskCommentController = require('../controllers/taskComment');
+const notificationController = require('../controllers/notification');
 
 const express = require('express');
 const router = express.Router();
@@ -58,11 +59,18 @@ router.route("/:domain/users/:username/tasks/:taskId")
 router.route("/:domain/users/:username/tasks/:taskId/status")
   .put(tokenModel.isLoggedIn, taskController.changeTaskStatus);
 
+router.route("/:domain/users/:username/tasks/:taskId/assign")
+  .put(tokenModel.isLoggedIn, taskController.assignTaskToUser);
+
 // Task Comments
 router.route("/:domain/users/:username/tasks/:taskId/comments")
   .post(tokenModel.isLoggedIn, taskCommentController.createTaskComment);
 
 router.route("/:domain/users/:username/tasks/:taskId/comments/:commentId")
   .delete(tokenModel.isLoggedIn, taskCommentController.deleteTaskComment);
+
+// Notifications
+router.route("/:domain/users/:username/projects/:projectId/tasks/notifications")
+  .post(tokenModel.isLoggedIn, notificationController.sendAssignmentsNotification);
 
 module.exports = router;

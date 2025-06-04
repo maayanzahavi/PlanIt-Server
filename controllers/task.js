@@ -102,11 +102,29 @@ const changeTaskStatus = async (req, res) => {
     }
 }
 
+const assignTaskToUser = async (req, res) => {
+    console.log('Assigning task to user:', req.params.taskId, req.body.userId);
+    const { domain, username, projectId, taskId } = req.params;
+    const { userId } = req.body;
+    try {
+        const task = await taskService.assignTaskToUser(taskId, userId);
+        res.status(200).json(task);
+    } catch (error) {
+        if (error.message === 'Task not found' || error.message === 'User not found') {
+            res.status(404).json({ error: error.message });
+        } else {
+            console.error('Error assigning task to user:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    }
+}
+
 module.exports = {
     createTask,
     getTaskById,
     updateTask,
     deleteTask,
     getProjectTasks,
-    changeTaskStatus
+    changeTaskStatus,
+    assignTaskToUser
 }

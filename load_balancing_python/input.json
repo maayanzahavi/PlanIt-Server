@@ -1,7 +1,7 @@
 {
   "tasks": [
     {
-      "id": "683c7fb2b23e4d5ca1113949",
+      "id": "68402e8fdf335f57f249341f",
       "skills": [
         null,
         null
@@ -12,26 +12,14 @@
   ],
   "members": [
     {
-      "id": "680e1e6462b65a41d18d9027",
-      "skills": [
-        null,
-        null,
-        null,
-        null
-      ],
-      "preferences": [],
-      "availability": 10,
-      "experience": 4
-    },
-    {
-      "id": "683af179e9485732c0800697",
+      "id": "683af715e9485732c080074b",
       "skills": [],
       "preferences": [],
       "availability": 10,
       "experience": 0
     },
     {
-      "id": "683af28de9485732c08006c3",
+      "id": "683af179e9485732c0800697",
       "skills": [],
       "preferences": [],
       "availability": 10,
