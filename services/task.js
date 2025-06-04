@@ -90,7 +90,9 @@ const deleteTask = async (taskId) => {
 
 const getProjectTasks = async (projectId) => {
     try {
-        const tasks = await Task.find({ project: projectId }).populate('assignedTo');
+        const tasks = await Task.find({ project: projectId })
+            .populate('assignedTo')
+            .populate('tags');
         return tasks;
     } catch (error) {
         throw new Error('Error fetching tasks: ' + error.message);
@@ -124,28 +126,11 @@ const changeTaskStatus = async (taskId, status) => {
     }
 }
 
-const addProjectToTasks = async (projectId, tasks) => {
-    console.log('Adding project to tasks in service:', projectId);
-    console.log('Tasks:', tasks);
-    try {
-        const updatedTasks = await Promise.all(tasks.map(async (task) => {
-            task.project = projectId;
-            return await taskService.updateTask(task._id, task);
-        }));
-        console.log('Updated tasks with project:', updatedTasks);
-        return updatedTasks;
-    } catch (error) {
-        console.error('Error adding project to tasks:', error);
-        throw new Error('Error adding project to tasks: ' + error.message);
-    }
-}
-
 module.exports = {
     createTask,
     getTaskById,
     updateTask,
     deleteTask,
     getProjectTasks,
-    changeTaskStatus,
-    addProjectToTasks
+    changeTaskStatus
 }
