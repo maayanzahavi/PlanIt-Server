@@ -10,6 +10,22 @@ const getAllSkills = async () => {
     }
 }
 
+const getOrCreateSkillsByLabels = async (labels = []) => {
+    const normalized = [...new Set(
+      labels.map(s => typeof s === 'string' ? s : s.label).filter(Boolean)
+    )];
+  
+    const existingSkills = await Skill.find({ label: { $in: normalized } });
+    const existingLabels = existingSkills.map(s => s.label);
+  
+    const newLabels = normalized.filter(label => !existingLabels.includes(label));
+    const newSkills = await Skill.insertMany(newLabels.map(label => ({ label })));
+  
+    return [...existingSkills, ...newSkills];
+  };
+  
+
 module.exports = {
-    getAllSkills
+    getAllSkills,
+    getOrCreateSkillsByLabels
 }

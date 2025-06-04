@@ -69,7 +69,10 @@ const generateSkillsAndPreferencesFromDescription = async (description) => {
     if (
       beforeText.includes("prefer") ||
       beforeText.includes("interested in") ||
-      beforeText.includes("comfortable with")
+      beforeText.includes("comfortable with") ||
+      beforeText.includes("loves") ||
+      beforeText.includes("enjoys") || 
+      beforeText.includes("likes") 
     ) {
       preferences.push(skill);
     } else {
