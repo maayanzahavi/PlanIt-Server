@@ -55,7 +55,7 @@ router.route("/:domain/users/:username/tasks/:taskId")
   .put(tokenModel.isLoggedIn, taskController.updateTask)
   .delete(tokenModel.isLoggedIn, taskController.deleteTask);
 
-router.route("/:domain/users/:username/projects/:projectId/tasks/:taskId/status")
+router.route("/:domain/users/:username/tasks/:taskId/status")
   .put(tokenModel.isLoggedIn, taskController.changeTaskStatus);
 
 // Task Comments

@@ -78,15 +78,16 @@ const deleteNotification = async (notificationId) => {
 }
 
 const handleNewNotification = async (userId, content) => {
+    console.log('Handling new notification for user:', userId, 'with content:', content);
     // Create a notification for the task status change
-    const notification = await notificationService.createNotification({
+    const notification = await createNotification({
         content: content,
         time: new Date(),
         user: userId
     });
 
     // Add notification to user
-    await notificationService.addNotificationToUser(
+    await addNotificationToUser(
        userId, notification._id
     );
 

@@ -7,26 +7,48 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const app = express();
-const server = http.createServer(app); 
+const server = http.createServer(app); // Required for socket.io
 
 // === SOCKET.IO SETUP ===
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:3000', 
+    origin: 'http://localhost:3000', // frontend URL
     credentials: true,
   },
 });
 
+// === SOCKET.IO JWT AUTHENTICATION ===
+io.use((socket, next) => {
+  const token = socket.handshake.auth.token;
+
+  if (!token) {
+    console.log('No token provided in handshake');
+    return next(new Error('Authentication error: Token missing'));
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    socket.user = decoded; // Attach decoded user info to socket
+    next();
+  } catch (err) {
+    console.log('Token verification failed');
+    return next(new Error('Authentication error: Invalid token'));
+  }
+});
+
+// === SOCKET CONNECTION HANDLER ===
 io.on('connection', (socket) => {
-  console.log('User connected:', socket.user?.id || socket.id);
-  socket.join(socket.user.id); // Join private room by user ID
+  const userId = socket.user?._id || socket.id;
+  console.log(`User connected: ${userId}`);
+
+  socket.join(userId); // Join user-specific room
 
   socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.user?.id || socket.id);
+    console.log(`User disconnected: ${userId}`);
   });
 });
 
-// Make io globally available
+// === MAKE IO AVAILABLE GLOBALLY ===
 module.exports.io = io;
 
 // === MIDDLEWARE ===
@@ -42,10 +64,11 @@ app.use('/api/users', require('./routes/user'));
 app.use('/api', require('./routes/password'));
 app.use('/api/ai', require('./routes/ai'));
 
-// === MONGODB + START SERVER ===
+// === CONNECT TO MONGODB & START SERVER ===
 mongoose.connect(process.env.CONNECTION_STRING)
   .then(() => {
     console.log('Connected to MongoDB');
+
     const PORT = process.env.PORT || 8800;
     server.listen(PORT, () => {
       console.log(`Server + Socket.IO running on http://localhost:${PORT}`);
