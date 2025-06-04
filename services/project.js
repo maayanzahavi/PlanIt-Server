@@ -1,7 +1,7 @@
 const Project = require('../models/project');  
 const userService = require('./user');
 const Task = require('../models/task');
-const taskCommentService = require('./taskComment');
+const notificationService = require('./notification');
 
 
 const createProject = async (project , organizationId, managerId) => {
@@ -193,6 +193,26 @@ const addProjectToTasks = async (projectId, tasks) => {
     }
 }
 
+const sendAssignmentsNotification = async (projectId) => {
+    try {
+        const project = await getProjectById(projectId)
+
+        if (!project) {
+            throw new Error('Project not found');
+        }
+
+        for (const task of project.tasks) {
+            if (task.assignedTo) {
+                console.log('Sending assignment notification for user:', task.assignedTo._id, 'task:', task.title);
+                const content = `You have been assigned to the task: ${task.title}`;
+                await notificationService.handleNewNotification(task.assignedTo._id, content);
+            }
+        }
+    } catch (error) {
+        console.error('Error sending assignment notifications:', error);
+        throw new Error('Error sending assignment notifications: ' + error.message);
+    }
+}
 
 module.exports = {
     createProject,
@@ -201,5 +221,6 @@ module.exports = {
     deleteProject,
     addTasksToProject,
     removeTaskFromProject,
-    updateProjectProgress
+    updateProjectProgress,
+    sendAssignmentsNotification
 };

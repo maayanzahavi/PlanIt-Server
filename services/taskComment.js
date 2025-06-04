@@ -1,4 +1,6 @@
 const TaskComment = require('../models/taskComment');
+const userService = require('./user');
+const notificationService = require('./notification');
 const Task = require('../models/task');
 const mongoose = require('mongoose');
 
@@ -6,6 +8,7 @@ const createTaskComment = async (taskId, username, content) => {
     console.log('Creating task comment in services:', taskId, username, content);
 
     try {
+        // Create new comment and add it to the task
         const task = await Task.findById(taskId);
         console.log('Task found in services:', task);
         if (!task) {
@@ -21,6 +24,24 @@ const createTaskComment = async (taskId, username, content) => {
         await newComment.save();
         task.comments.push(newComment._id);
         await task.save();
+
+        // Find the manager and team member
+        const user = await userService.getUserByUsername(username);
+        if (!user) {
+            console.error('User not found:', username);
+            throw new Error('Team member not found');
+        }
+
+        const teamMember = task.assignedTo;
+        const manager = teamMember.username === username ? teamMember.manager : user;
+        console.log('Manager found:', manager);
+        console.log('Team member found:', teamMember);
+
+        // Create notification for the right user
+        const notifiedUser = teamMember.username === username ? manager : teamMember;
+        console.log('Notified user:', notifiedUser);
+        await notificationService.handleNewNotification(notifiedUser._id, `A new comment has been added to the task: ${task.title}`);
+
         return newComment;
     }
     catch (error) {

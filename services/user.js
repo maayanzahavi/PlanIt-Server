@@ -284,8 +284,6 @@ const getTeamMembers = async (username) => {
   }
 };
 
-
-
 module.exports = {
     isSigned,
     createTeamManager,
