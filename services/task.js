@@ -71,7 +71,7 @@ const deleteTask = async (taskId) => {
       }
   
       if (task.project) {
-        console.log("Removing task from project:", task.project);
+        console.log("Removing task from project:", task.project.title);
         await Project.findByIdAndUpdate(task.project, {
           $pull: { tasks: taskId }
         });

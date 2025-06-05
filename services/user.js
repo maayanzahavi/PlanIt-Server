@@ -15,7 +15,7 @@ async function isSigned(username, password) {
   try {
     const user = await User.findOne({ username });
     if (!user) return false;
-    console.log("User found:", user);
+    console.log("User found:", user.username);
     const passwordMatch = await bcrypt.compare(password, user.password);
     console.log("Password match:", passwordMatch);
     return passwordMatch;
@@ -271,6 +271,40 @@ const removeTaskFromUser = async (taskId) => {
     }
 }
 
+const addTasksToUser = async (userId, taskIds) => {
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    
+    user.tasks.push(...taskIds);
+    await user.save();
+    
+    return user;
+  } catch (error) {
+    console.error('Error adding tasks to user:', error);
+    throw new Error('Error adding tasks to user: ' + error.message);
+  }
+}
+
+const addProjectToUser = async (userId, projectId) => {
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    
+    user.projects.push(projectId);
+    await user.save();
+    
+    return user;
+  } catch (error) {
+    console.error('Error adding project to user:', error);
+    throw new Error('Error adding project to user: ' + error.message);
+  }
+}
+
 const getTeamMembers = async (username) => {
   try {
     const manager = await User.findOne({ username });
@@ -296,4 +330,6 @@ module.exports = {
     removeProjectFromUsers,
     removeTaskFromUser,
     getTeamMembers,
+    addTasksToUser,
+    addProjectToUser
 }
