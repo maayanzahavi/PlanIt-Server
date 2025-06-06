@@ -240,6 +240,14 @@ const addProjectToUsers = async (projectId, team) => {
 
 const sendAssignmentsNotification = async (projectId) => {
     try {
+        if (!projectId) {
+            throw new Error('Project ID is required');
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(projectId)) {
+            throw new Error('Invalid project ID format');
+        }
+
         const project = await getProjectById(projectId)
 
         if (!project) {

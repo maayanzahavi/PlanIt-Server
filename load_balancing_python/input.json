@@ -1,34 +1,25 @@
 {
   "tasks": [
     {
-      "id": "6842b451058e6c5eb9aec524",
+      "id": "6842bf3e012c9db9c30c0b99",
       "skills": [
         null,
         null
       ],
-      "assignedTo": "683af28de9485732c08006c3",
+      "assignedTo": null,
       "availabilities": {}
     }
   ],
   "members": [
     {
-      "id": "680e1e6462b65a41d18d9026",
-      "skills": [
-        null
-      ],
-      "preferences": [],
-      "availability": 10,
-      "experience": 2
-    },
-    {
-      "id": "683af28de9485732c08006c3",
+      "id": "683af179e9485732c0800697",
       "skills": [],
       "preferences": [],
       "availability": 10,
       "experience": 0
     },
     {
-      "id": "683af715e9485732c080074b",
+      "id": "683af28de9485732c08006c3",
       "skills": [],
       "preferences": [],
       "availability": 10,
