@@ -9,7 +9,7 @@ const formatData = (project, inputPath) => {
     const inputData = {
         tasks: project.tasks.map(task => ({
           id: task._id.toString(),
-          skills: task.tags.map(tag => tag.name),
+          skills: task.tags.map(tag => tag._id),
           type: task.type,
           weight: task.weight,
           urgency: task.urgency,
@@ -18,7 +18,7 @@ const formatData = (project, inputPath) => {
         })),
         members: project.team.map(member => ({
           id: member._id.toString(),
-          skills: member.skills.map(skill => skill.name),
+          skills: member.skills.map(skill => skill),
           preferences: member.preferences,
           availability: (project.avaliabilites && project.avaliabilites[member._id.toString()]) || 0, // Fallback to 0 if undefined
           experience: member.experience
@@ -60,7 +60,9 @@ const runLoadBalancer = async (req, res) => {
   const inputPath = path.join(__dirname, "../load_balancing_python/input.json");
   const outputPath = path.join(__dirname, "../load_balancing_python/output.json");
 
+
   console.log("Running load balancer with project:", project.title);
+  console.log("Team skills:", project.team.map(member => member.skills.map(skill => skill)));
 
   try {
     // Validate project object
@@ -68,6 +70,7 @@ const runLoadBalancer = async (req, res) => {
       return res.status(400).json({ error: "Invalid project data" });
     }
 
+    // Export data to input file
     formatData(project, inputPath);
 
     // Execute the Python script
