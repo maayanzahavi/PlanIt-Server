@@ -73,66 +73,84 @@ async function isSigned(username, password) {
     }
   };
   
-  const Skill = require('../models/skill'); 
+  const skill = require('./skill');
 
-  const createTeamMember = async (userData, organizationId, creatorId) => {
-    try {
-      console.log("Creating team member with data:", userData);
-  
-      const rawPassword = userData.password && userData.password.trim() !== ""
-        ? userData.password
-        : "As1234";
-      const hashedPassword = await bcrypt.hash(rawPassword, 10);
-  
-      // Normalize labels
-      const normalize = (arr) =>
-        (arr || []).map(s => typeof s === 'string' ? s : s.label).filter(Boolean);
-  
-      const skillLabelsArray = normalize(userData.skills);
-      const preferenceLabelsArray = normalize(userData.preferences);
-      const allLabels = [...new Set([...skillLabelsArray, ...preferenceLabelsArray])];
-  
-      const allSkills = await getOrCreateSkillsByLabels(allLabels);
-      const skillLabels = new Set(skillLabelsArray);
-      const preferenceLabels = new Set(preferenceLabelsArray);
-  
-      const skillDocs = allSkills.filter(s => skillLabels.has(s.label));
-      const preferenceDocs = allSkills.filter(s => preferenceLabels.has(s.label));
-  
-      const newUser = new User({
-        email: userData.email,
-        username: userData.username,
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        password: hashedPassword,
-        role: 'team_member',
-        profilePic: userData.profilePic ?? "",
-        experience: 0,
-        organization: organizationId,
-        skills: skillDocs.map(doc => doc._id),
-        preferences: preferenceDocs.map(doc => doc._id),
-        tasks: [],
-        notifications: [],
-        manager: creatorId,
-      });
-  
-      await newUser.save();
-      console.log("Saved team member user:", newUser);
-  
-      if (creatorId) {
-        await User.findByIdAndUpdate(
-          creatorId,
-          { $addToSet: { team: newUser._id } },
-          { new: true }
-        ).populate('team');
-      }
-  
-      return newUser;
-    } catch (error) {
-      console.error("Error in createTeamMember service:", error);
-      throw new Error('Error creating team member: ' + error.message);
+
+const createTeamMember = async (userData, organizationId, creatorId) => {
+  try {
+    console.log("=== [createTeamMember] Starting creation process ===");
+    console.log("Raw userData:", userData);
+    console.log("Organization ID:", organizationId);
+    console.log("Creator ID:", creatorId);
+
+    // Normalize labels
+    const normalize = (arr) =>
+      (arr || []).map(s => {
+        if (!s) return null;
+        if (typeof s === 'string') return s;
+        if (s.label) return s.label;
+        return null;
+      }).filter(Boolean);
+
+    const skillLabelsArray = normalize(userData.skills);
+    const preferenceLabelsArray = normalize(userData.preferences);
+    const allLabels = [...new Set([...skillLabelsArray, ...preferenceLabelsArray])];
+
+    console.log("Normalized skill labels:", skillLabelsArray);
+    console.log("Normalized preference labels:", preferenceLabelsArray);
+    console.log("Combined unique labels:", allLabels);
+
+    const allSkills = await skill.getOrCreateSkillsByLabels(allLabels);
+    const skillLabels = new Set(skillLabelsArray);
+    const preferenceLabels = new Set(preferenceLabelsArray);
+
+    const skillDocs = allSkills.filter(s => skillLabels.has(s.label));
+    const preferenceDocs = allSkills.filter(s => preferenceLabels.has(s.label));
+
+    const rawPassword = userData.password && userData.password.trim() !== ""
+      ? userData.password
+      : "As1234";
+    const hashedPassword = await bcrypt.hash(rawPassword, 10);
+
+    const newUser = new User({
+      email: userData.email,
+      username: userData.username,
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      password: hashedPassword,
+      role: 'team_member',
+      profilePic: userData.profilePic ?? "",
+      experience: userData.experience || 0,
+      organization: organizationId,
+      skills: skillDocs.map(doc => doc._id),
+      preferences: preferenceDocs.map(doc => doc._id),
+      tasks: [],
+      notifications: [],
+      manager: creatorId,
+    });
+
+    await newUser.save();
+    console.log(" [createTeamMember] Saved user:", newUser);
+
+    if (creatorId) {
+      const updatedManager = await User.findByIdAndUpdate(
+        creatorId,
+        { $addToSet: { team: newUser._id } },
+        { new: true }
+      ).populate('team');
+      console.log("[createTeamMember] Updated manager with new team member:", updatedManager.username);
+    } else {
+      console.warn(" [createTeamMember] No creatorId provided – skipping manager team update.");
     }
-  };
+
+    return newUser;
+  } catch (err) {
+    console.error(" [createTeamMember] Error occurred:", err.message);
+    console.error(err.stack);
+    throw new Error('Error creating team member: ' + err.message);
+  }
+};
+
   
 
   
