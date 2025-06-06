@@ -44,7 +44,7 @@ const parseAssignments = async (project, outputPath) => {
         await taskService.updateTask(task._id, { assignedTo: assignedUserId }); // Pass the user ID to updateTask
       }
     });
-    console.log("Assignments updated in project:", project);
+    console.log("Assignments updated in project:", project.tasks);
     return project;
   } catch (err) {
     console.error(`Error parsing assignments: ${err.message}`);
@@ -60,7 +60,7 @@ const runLoadBalancer = async (req, res) => {
   const inputPath = path.join(__dirname, "../load_balancing_python/input.json");
   const outputPath = path.join(__dirname, "../load_balancing_python/output.json");
 
-  console.log("Running load balancer with project:", project);
+  console.log("Running load balancer with project:", project.title);
 
   try {
     // Validate project object
@@ -85,7 +85,7 @@ const runLoadBalancer = async (req, res) => {
         // Use parseAssignments to update the project 
         // and return the project with updates task assignments
         const updatedProject = await parseAssignments(project, outputPath);
-        console.log("Updated project with assignments:", updatedProject);
+        console.log("Updated project with assignments:", updatedProject.tasks);
         const finalProject = await projectService.updateProject(projectId, updatedProject);
         res.status(200).json(finalProject);
       } catch (parseError) {

@@ -81,7 +81,7 @@ const getUserByUsername = async (req, res) => {
 
     try {
         const user = await userService.getUserByUsername(req.params.username);
-        console.log('User found:', user);
+        console.log('User found:', user.username);
         res.status(200).json(user);
     } catch (error) {
         if (error.message === 'User not found') {

@@ -2,12 +2,12 @@ const Project = require('../models/project');
 const userService = require('./user');
 const Task = require('../models/task');
 const notificationService = require('./notification');
-
+const mongoose = require('mongoose');
 
 const createProject = async (project , organizationId, managerId) => {
-    console.log('Creating project in service:', project);
+    console.log('Creating project in service:', project.title);
     const newProject = new Project(project);
-    console.log('New project:', newProject);
+    console.log('New project:', newProject.title);
     newProject.organization = organizationId;
     newProject.manager = managerId;
     
@@ -15,7 +15,12 @@ const createProject = async (project , organizationId, managerId) => {
         await newProject.save();
         // Change addTasksToProject to addProjectToTasks
         if (project.tasks && project.tasks.length > 0) {
-            await addProjectToTasks(newProject._id, project.tasks);
+            await addProjectToTasks(newProject._id, newProject.tasks);
+        }
+
+        if (project.team && project.team.length > 0) {
+            // Add project to each team member
+            await addProjectToUsers(newProject._id, [...project.team, managerId]);
         }
         return newProject;
     } catch (error) {
@@ -46,7 +51,7 @@ const getProjectById = async (projectId) => {
 }
 
 const updateProject = async (projectId, project) => {    
-    console.log('Updating project in service:', project); 
+    console.log('Updating project in service:', project.title); 
 
     try {
         const updatedProject = await Project.findByIdAndUpdate(projectId, project, { new: true })
@@ -63,7 +68,7 @@ const updateProject = async (projectId, project) => {
             console.log('Project not found');
             throw new Error('Project not found');
         }
-        console.log('Updated project:', updatedProject);
+        console.log('Updated project:', updatedProject.title);
         return updatedProject;
     }
     catch (error) {
@@ -123,7 +128,7 @@ const addTasksToProject = async (project, tasks) => {
             console.log('Project not found');
             throw new Error('Project not found');
         }
-        console.log('Updated project with tasks:', updatedProject);
+        console.log('Updated project with tasks:', updatedProject.title);
         return updatedProject;
     } catch (error) {
         console.error('Error adding tasks to project:', error);
@@ -193,8 +198,56 @@ const addProjectToTasks = async (projectId, tasks) => {
     }
 }
 
+const addTasksToUsers = async (tasks, team) => {
+    console.log('Adding tasks to users in service:', team);
+    console.log('Tasks:', tasks);
+
+    try {
+        const tasksAsObjectIds = tasks.map(id => new mongoose.Types.ObjectId(id));
+        const fetchedTasks = await Task.find({ _id: { $in: tasksAsObjectIds } });
+        console.log('Fetched tasks:', fetchedTasks);
+        
+        for (const member of team) {
+            const memberId = member._id?.toString() || member.toString();
+            const memberTasks = fetchedTasks.filter(task => task.assignedTo.toString() === memberId);
+            if (memberTasks.length > 0) {
+                console.log('Adding tasks to user:', memberId, 'Tasks:', memberTasks);
+                await userService.addTasksToUser(memberId, memberTasks.map(task => task._id));
+            }
+        }
+    }
+    catch (error) {
+        console.error('Error adding tasks to users:', error);
+        throw new Error('Error adding tasks to users: ' + error.message);
+    }
+};
+
+const addProjectToUsers = async (projectId, team) => {
+    console.log('Adding project to users in service:', projectId);
+    console.log('Team:', team);
+
+    try {
+        for (const member of team) {
+            console.log('Adding project to user:', member._id);
+            await userService.addProjectToUser(member._id, projectId);
+        }
+    } catch (error) {
+        console.error('Error adding project to users:', error);
+        throw new Error('Error adding project to users: ' + error.message);
+    }
+}
+            
+
 const sendAssignmentsNotification = async (projectId) => {
     try {
+        if (!projectId) {
+            throw new Error('Project ID is required');
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(projectId)) {
+            throw new Error('Invalid project ID format');
+        }
+
         const project = await getProjectById(projectId)
 
         if (!project) {

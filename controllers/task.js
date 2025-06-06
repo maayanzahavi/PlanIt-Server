@@ -103,11 +103,13 @@ const changeTaskStatus = async (req, res) => {
 }
 
 const assignTaskToUser = async (req, res) => {
-    console.log('Assigning task to user:', req.params.taskId, req.body.userId);
     const { domain, username, projectId, taskId } = req.params;
-    const { userId } = req.body;
+    const { user } = req.body;
+    console.log("User in assigned user: ", user);
+    console.log("User in assignTaskToUser controller: ", user.username, user._id);
+
     try {
-        const task = await taskService.assignTaskToUser(taskId, userId);
+        const task = await taskService.assignTaskToUser(taskId, user._id);
         res.status(200).json(task);
     } catch (error) {
         if (error.message === 'Task not found' || error.message === 'User not found') {
