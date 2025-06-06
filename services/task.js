@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Task = require('../models/task');
+const User = require('../models/user');
 const userService = require('./user');
 const projectService = require('./project');
 const notificationService = require('./notification');
@@ -137,7 +138,8 @@ const changeTaskStatus = async (taskId, status) => {
 const assignTaskToUser = async (taskId, userId) => {
     console.log('Assigning task to user in service:', taskId, userId);
     try {
-        const task = await Task.findById(taskId);
+        // Fetch the user and the task
+        const task = await Task.findById(taskId).populate('assignedTo');
         if (!task) {
             throw new Error('Task not found');
         }
@@ -145,6 +147,18 @@ const assignTaskToUser = async (taskId, userId) => {
         if (!user) {
             throw new Error('User not found');
         }
+
+        // If the task is already assigned to a user, remove the task from their tasks
+        if (task.assignedTo) {
+            const prevUser = task.assignedTo;
+            prevUser.tasks = prevUser.tasks.filter((t) => t !== task._id);
+        }
+
+        // Add the task to the tasks list of the new user
+        user.tasks.push(task._id);
+        await user.save();
+
+        // Change assignment in task
         task.assignedTo = userId;
         await task.save();
 

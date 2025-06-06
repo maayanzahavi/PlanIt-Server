@@ -16,7 +16,6 @@ const createProject = async (project , organizationId, managerId) => {
         // Change addTasksToProject to addProjectToTasks
         if (project.tasks && project.tasks.length > 0) {
             await addProjectToTasks(newProject._id, newProject.tasks);
-            await addTasksToUsers(newProject.tasks, newProject.team);
         }
 
         if (project.team && project.team.length > 0) {
