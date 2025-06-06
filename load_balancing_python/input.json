@@ -1,70 +1,16 @@
 {
   "tasks": [
     {
-      "id": "680e1ea162b65a41d18d904c",
+      "id": "6842e04dce912ebaa00f11af",
       "skills": [
-        "68177f0ae010f653b19f8832",
-        "68177f0ae010f653b19f8833",
-        "68177f0ae010f653b19f8834",
-        "68177f0ae010f653b19f8835",
-        "68177f0ae010f653b19f8836",
-        "68177f0ae010f653b19f8837",
         "68177f0ae010f653b19f8838",
-        "68177f0ae010f653b19f8839",
-        "68177f0ae010f653b19f883a"
+        "68177f0ae010f653b19f8839"
       ],
-      "assignedTo": "6842d7a9bab24007be319240",
-      "availabilities": {}
-    },
-    {
-      "id": "6842f33b7d900804a0a88ff1",
-      "skills": [
-        "68177f0ae010f653b19f8831"
-      ],
-      "assignedTo": "6842d7a9bab24007be319240",
-      "availabilities": {}
-    },
-    {
-      "id": "684303a52fbdfa1be866cd42",
-      "skills": [
-        "68177f0ae010f653b19f8841",
-        "68177f0ae010f653b19f8846"
-      ],
-      "assignedTo": "680e1e6462b65a41d18d9026",
-      "availabilities": {}
-    },
-    {
-      "id": "684303b42fbdfa1be866cd6a",
-      "skills": [
-        "68177f0ae010f653b19f8841",
-        "68177f0ae010f653b19f8846",
-        "68177f0ae010f653b19f8847",
-        "68177f0ae010f653b19f885b"
-      ],
-      "assignedTo": "6842d7a9bab24007be319240",
+      "assignedTo": null,
       "availabilities": {}
     }
   ],
   "members": [
-    {
-      "id": "680e1e6462b65a41d18d9025",
-      "skills": [
-        "680e1e9062b65a41d18d9031",
-        "680e1e9062b65a41d18d9032"
-      ],
-      "preferences": [],
-      "availability": 10,
-      "experience": 5
-    },
-    {
-      "id": "680e1e6462b65a41d18d9026",
-      "skills": [
-        "680e1e9062b65a41d18d9033"
-      ],
-      "preferences": [],
-      "availability": 10,
-      "experience": 2
-    },
     {
       "id": "6842d7a9bab24007be319240",
       "skills": [

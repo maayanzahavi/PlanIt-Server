@@ -1,13 +1,12 @@
 const mongoose = require('mongoose');
 const Task = require('../models/task');
-const User = require('../models/user');
+require('../models/user');
 const userService = require('./user');
-const projectService = require('./project');
 const notificationService = require('./notification');
 const Project = require('../models/project');
 require('../models/skill');
 require('../models/taskComment');   
-const { io } = require('../server');
+require('../server');
 
 const createTask = async (task) => {
     console.log('Creating task in service:', task);
@@ -66,11 +65,13 @@ const deleteTask = async (taskId) => {
   
       console.log("Task to delete:", task._id);
   
+      // Delete task from user's tasks if assigned
       if (task.assignedTo) {
         console.log("Removing task from user:", task.assignedTo);
         await userService.removeTaskFromUser(task.assignedTo, taskId);
       }
   
+      // Remove task from project's tasks if it belongs to a project
       if (task.project) {
         console.log("Removing task from project:", task.project.title);
         await Project.findByIdAndUpdate(task.project, {
@@ -118,7 +119,7 @@ const changeTaskStatus = async (taskId, status) => {
 
         // Update project progress after task status change
         if (updatedTask.project) {
-            await projectService.updateProjectProgress(updatedTask.project);
+            await updateProjectProgress(updatedTask.project);
         }
 
         // Notify manager about task status change
@@ -132,6 +133,29 @@ const changeTaskStatus = async (taskId, status) => {
     catch (error) {
         console.error('Error updating task status:', error);
         throw new Error('Error updating task status: ' + error.message);
+    }
+}
+
+const updateProjectProgress = async (projectId) => {
+    try {
+        const project = await Project.findById(projectId).populate('tasks');
+        if (!project) {
+            throw new Error('Project not found');
+        }
+
+        const totalTasks = project.tasks.length;
+        if (totalTasks === 0) {
+            project.progress = 0;
+        } else {
+            const completedTasks = project.tasks.filter(task => task.status === 'Done').length;
+            project.progress = Math.round((completedTasks / totalTasks) * 100);
+        }
+
+        await project.save();
+        return project;
+    } catch (error) {
+        console.error('Error updating project progress:', error);
+        throw new Error('Error updating project progress: ' + error.message);
     }
 }
 

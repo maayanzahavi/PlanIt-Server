@@ -13,7 +13,7 @@ const formatData = (project, inputPath) => {
           type: task.type,
           weight: task.weight,
           urgency: task.urgency,
-          assignedTo: task.assignedTo._id || null,
+          assignedTo: task.assignedTo && task.assignedTo._id || null,
           availabilities: project.availabilities || {} // Include task-specific availabilities
         })),
         members: project.team.map(member => ({
