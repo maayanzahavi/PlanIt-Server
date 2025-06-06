@@ -80,8 +80,8 @@ const generateSkillsAndPreferencesFromDescription = async (description) => {
     }
   }
 
-  console.log("🎯 Skills:", skills);
-  console.log("🎯 Preferences:", preferences);
+  console.log("Skills:", skills);
+  console.log("Preferences:", preferences);
 
   return { skills, preferences };
 };

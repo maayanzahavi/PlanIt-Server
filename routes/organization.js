@@ -73,4 +73,7 @@ router.route("/:domain/users/:username/tasks/:taskId/comments/:commentId")
 router.route("/:domain/users/:username/projects/:projectId/tasks/notifications")
   .post(tokenModel.isLoggedIn, notificationController.sendAssignmentsNotification);
 
+router.route("/:domain/users/:username/notifications/:notificationId")
+  .delete(tokenModel.isLoggedIn, notificationController.deleteNotification);
+
 module.exports = router;
