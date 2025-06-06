@@ -166,6 +166,7 @@ const getUserByUsername = async (username) => {
             console.log('User not found');
             throw new Error('User not found');
         }
+        console.log('User found:', user);
         return user;
     }
     catch (error) {
