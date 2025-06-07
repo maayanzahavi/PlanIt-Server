@@ -2,6 +2,7 @@ const Project = require('../models/project');
 const userService = require('./user');
 const Task = require('../models/task');
 const notificationService = require('./notification');
+const taskService = require('./task');
 const mongoose = require('mongoose');
 
 const createProject = async (project , organizationId, managerId) => {
@@ -152,29 +153,6 @@ const removeTaskFromProject = async (projectId, taskId) => {
     }
 }
 
-const updateProjectProgress = async (projectId) => {
-    try {
-        const project = await Project.findById(projectId).populate('tasks');
-        if (!project) {
-            throw new Error('Project not found');
-        }
-
-        const totalTasks = project.tasks.length;
-        if (totalTasks === 0) {
-            project.progress = 0;
-        } else {
-            const completedTasks = project.tasks.filter(task => task.status === 'Done').length;
-            project.progress = Math.round((completedTasks / totalTasks) * 100);
-        }
-
-        await project.save();
-        return project;
-    } catch (error) {
-        console.error('Error updating project progress:', error);
-        throw new Error('Error updating project progress: ' + error.message);
-    }
-}
-
 const addProjectToTasks = async (projectId, tasks) => {
     console.log('Adding project to tasks in service:', projectId);
     console.log('Tasks:', tasks);
@@ -274,6 +252,5 @@ module.exports = {
     deleteProject,
     addTasksToProject,
     removeTaskFromProject,
-    updateProjectProgress,
     sendAssignmentsNotification
 };

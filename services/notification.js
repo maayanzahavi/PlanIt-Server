@@ -66,10 +66,23 @@ const addNotificationToUser = async (userId, notificationId) => {
 const deleteNotification = async (notificationId) => {
     console.log('Deleting notification in service:', notificationId);
     try {
+        // Find and delete the notification
         const notification = await Notification.findByIdAndDelete(notificationId);
         if (!notification) {
             throw new Error('Notification not found');
         }
+
+        // Remove notification from user's notifications
+        const user = await userService.getUserById(notification.user);
+        if (!user) {
+            throw new Error('User not found');
+        }
+        console.log('User before removing notification:', user);
+        user.notifications = user.notifications.filter(
+            (id) => id.toString() !== notificationId.toString()
+        );
+        await user.save();
+
         return notification;
     } catch (error) {
         console.error('Error deleting notification:', error);

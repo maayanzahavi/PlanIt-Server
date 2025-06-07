@@ -1,4 +1,5 @@
 const projectService = require('../services/project');
+const notificationService = require('../services/notification');
 
 const sendAssignmentsNotification = async (req, res) => {
     console.log('Sending assignments notification for project:', req.params.projectId);
@@ -14,6 +15,20 @@ const sendAssignmentsNotification = async (req, res) => {
     }
 }
 
+const deleteNotification = async (req, res) => {
+    console.log('Deleting notification with ID:', req.params.notificationId);
+    const notificationId = req.params.notificationId;
+    try {
+        // Delete the notification
+        const deletedNotification = await notificationService.deleteNotification(notificationId);
+        res.status(200).json(deletedNotification);
+    } catch (error) {
+        console.error('Error deleting notification:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
 module.exports = {
-    sendAssignmentsNotification
+    sendAssignmentsNotification,
+    deleteNotification
 };

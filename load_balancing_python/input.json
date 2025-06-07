@@ -1,10 +1,10 @@
 {
   "tasks": [
     {
-      "id": "6842bf3e012c9db9c30c0b99",
+      "id": "684400cd730b5c5ab8d4a506",
       "skills": [
-        null,
-        null
+        "68177f0ae010f653b19f8834",
+        "68177f0ae010f653b19f8835"
       ],
       "assignedTo": null,
       "availabilities": {}
@@ -12,18 +12,29 @@
   ],
   "members": [
     {
-      "id": "683af179e9485732c0800697",
-      "skills": [],
-      "preferences": [],
+      "id": "6842d7a9bab24007be319240",
+      "skills": [
+        "68177f0ae010f653b19f8833",
+        "68177f0ae010f653b19f8832",
+        "68177f0ae010f653b19f8831"
+      ],
+      "preferences": [
+        "68177f0ae010f653b19f8839",
+        "68177f0ae010f653b19f8837",
+        "68177f0ae010f653b19f883a"
+      ],
       "availability": 10,
-      "experience": 0
+      "experience": 10
     },
     {
-      "id": "683af28de9485732c08006c3",
-      "skills": [],
+      "id": "680e1e6462b65a41d18d9026",
+      "skills": [
+        "680e1e9062b65a41d18d9033"
+      ],
       "preferences": [],
       "availability": 10,
-      "experience": 0
+      "experience": 2
     }
-  ]
+  ],
+  "preference_vs_urgency": 0.83
 }

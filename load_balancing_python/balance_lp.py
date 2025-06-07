@@ -56,7 +56,7 @@ def parse_solution(variables, tasks, members):
 problem = p.LpProblem('Problem', p.LpMaximize)
 
 # Get tasks and members
-tasks, members = parse_json()
+tasks, members, preference_vs_urgency = parse_json()
 
 # Add weight field to tasks based on priority
 for task in tasks:
@@ -67,7 +67,7 @@ variables = create_variables(tasks, members)
 
 # Objective: maximize total score
 problem += p.lpSum([
-    score(task, member) * variables[(task["id"], member["id"])]
+    score(task, member, preference_vs_urgency) * variables[(task["id"], member["id"])]
     for task in tasks
     for member in members
 ])
