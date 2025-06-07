@@ -72,14 +72,21 @@ ${description}
     
     skills = await skillService.getSkillsByLabels(skillLabels);
     preferences = await skillService.getSkillsByLabels(preferenceLabels);
+
+    // Save unmatched skills and preferences
+    unmatchedSkills = skillLabels.filter(label => !skills.some(skill => skill.label === label)) || []; 
+    unmatchedPreferences = preferenceLabels.filter(label => !preferences.some(pref => pref.label === label)) || [];
+
   } catch (e) {
     console.error("Failed to parse OpenAI response:", completion.choices[0].message.content);
   }
 
   console.log("Skills:", skills);
   console.log("Preferences:", preferences);
+  console.log("Unmatched skills:", unmatchedSkills);
+  console.log("Unmatched preferences:", unmatchedPreferences);
 
-  return { skills, preferences };
+  return { skills, preferences, unmatchedSkills, unmatchedPreferences };
 }
 
 module.exports = {
