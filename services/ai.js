@@ -48,6 +48,9 @@ Only return the object, no explanation.
     await newSkill.save();
   }
 
+  console.log("Skills:", skills);
+  console.log("Preferences:", preferences);
+
   return { skills, preferences };
 }
 
