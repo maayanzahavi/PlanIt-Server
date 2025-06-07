@@ -13,4 +13,16 @@ const generateSkills = async (req, res) => {
   }
 };
 
-module.exports = { generateSkills };
+const generateTagsForTask = async (req, res) => {
+  try {
+    const { description } = req.body;
+    console.log("Received request to generate tags with description:", description);
+
+    const tags = await aiService.generateTagsForTask(description);
+    res.json({ tags });
+  } catch (error) {
+    console.error("Error in controller:", error);
+    res.status(500).json({ error: 'Failed to generate tags' });
+  }
+}
+module.exports = { generateSkills, generateTagsForTask };
