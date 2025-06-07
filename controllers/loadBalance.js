@@ -22,7 +22,8 @@ const formatData = (project, inputPath) => {
           preferences: member.preferences,
           availability: (project.avaliabilites && project.avaliabilites[member._id.toString()]) || 0, // Fallback to 0 if undefined
           experience: member.experience
-        }))
+        })),
+        preference_vs_urgency: project.preferencesWeight || 0.5, 
       };
   
       // Write to input.json
