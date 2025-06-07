@@ -1,90 +1,55 @@
-require('dotenv').config();
-const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
+const { OpenAI } = require('openai');
 const Skill = require('../models/skill');
-const HF_API_KEY = process.env.HF_API_KEY;
+require('dotenv').config();
 
-const generateSkillsAndPreferencesFromDescription = async (description) => {
-  console.log("Entered generateSkillsAndPreferencesFromDescription");
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-  const allSkills = await Skill.find();
-  const skillLabels = allSkills
-    .filter(skill => typeof skill.label === 'string')
-    .map(skill => skill.label.trim().toLowerCase());
+async function generateSkillsAndPreferencesFromDescription(description) {
+  console.log("Classifying using OpenAI:", description);
 
-  const response = await fetch(
-    'https://api-inference.huggingface.co/models/dslim/bert-base-NER',
-    {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${HF_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ inputs: description }),
-    }
-  );
+  const systemMessage = `
+You are an assistant that receives a short text describing a new team member.
+From this text, extract two lists:
+- One for 'skills' (technologies or abilities the person has)
+- One for 'preferences' (things the person prefers, likes or enjoys)
 
-  const rawText = await response.text();
-  console.log("Raw HF response:", rawText);
+Return a JSON object with two arrays: 'skills' and 'preferences'.
+Only return the object, no explanation.
+`;
 
-  let nerResult;
+  const completion = await openai.chat.completions.create({
+    model: "gpt-3.5-turbo",
+    messages: [
+      { role: "system", content: systemMessage },
+      { role: "user", content: description }
+    ],
+    temperature: 0.2
+  });
+
+  let skills = [];
+  let preferences = [];
+
   try {
-    nerResult = JSON.parse(rawText);
-  } catch (err) {
-    throw new Error("Failed to parse HuggingFace response as JSON");
+    const response = JSON.parse(completion.choices[0].message.content);
+    skills = response.skills || [];
+    preferences = response.preferences || [];
+  } catch (e) {
+    console.error("Failed to parse OpenAI response:", completion.choices[0].message.content);
   }
 
-  const nerWords = [...new Set(
-    nerResult
-      .map(e => e.word?.replace(/^##/, '').toLowerCase())
-      .filter(Boolean)
-  )];
+  const existingSkills = await Skill.find();
+  const existingLabels = existingSkills.map(s => s.label.toLowerCase());
 
-  const matchedFromNER = skillLabels.filter(skill =>
-    nerWords.includes(skill)
-  );
+  const newTags = [...skills, ...preferences]
+    .filter(tag => !existingLabels.includes(tag.toLowerCase()));
 
-  const matchedFromText = skillLabels.filter(skill =>
-    description.toLowerCase().includes(skill)
-  );
-
-  const combined = [...new Set([...matchedFromNER, ...matchedFromText])];
-
-  const newSkills = nerWords.filter(word =>
-    !combined.includes(word) && !skillLabels.includes(word)
-  );
-
-  for (const newSkill of newSkills) {
-    const skillDoc = new Skill({ label: newSkill });
-    await skillDoc.save().catch(() => {}); 
-    combined.push(newSkill);
+  for (const tag of newTags) {
+    const newSkill = new Skill({ label: tag });
+    await newSkill.save();
   }
-
-  const preferences = [];
-  const skills = [];
-
-  for (const skill of combined) {
-    const idx = description.toLowerCase().indexOf(skill);
-    const beforeText = description.toLowerCase().substring(0, idx);
-
-    if (
-      beforeText.includes("prefer") ||
-      beforeText.includes("interested in") ||
-      beforeText.includes("comfortable with") ||
-      beforeText.includes("loves") ||
-      beforeText.includes("enjoys") || 
-      beforeText.includes("likes") 
-    ) {
-      preferences.push(skill);
-    } else {
-      skills.push(skill);
-    }
-  }
-
-  console.log("Skills:", skills);
-  console.log("Preferences:", preferences);
 
   return { skills, preferences };
-};
+}
 
 module.exports = {
   generateSkillsAndPreferencesFromDescription,
