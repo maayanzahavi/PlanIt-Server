@@ -23,9 +23,20 @@ const getOrCreateSkillsByLabels = async (labels = []) => {
   
     return [...existingSkills, ...newSkills];
   };
-  
 
+const getSkillsByLabels = async (labels = []) => {
+    
+    try {
+        const skills = await Skill.find({ label: { $in: labels } });
+        return skills;
+    } catch (error) {
+        console.error('Error fetching skills by labels:', error);
+        throw new Error('Error fetching skills by labels: ' + error.message);
+    }
+}
+  
 module.exports = {
     getAllSkills,
-    getOrCreateSkillsByLabels
+    getOrCreateSkillsByLabels,
+    getSkillsByLabels
 }
