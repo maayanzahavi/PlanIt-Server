@@ -3,6 +3,8 @@ const aiService = require('../services/ai');
 const generateSkills = async (req, res) => {
   try {
     const { description } = req.body;
+    console.log("Received request to generate skills with description:", description);
+
     const { skills, preferences } = await aiService.generateSkillsAndPreferencesFromDescription(description);
     res.json({ skills, preferences });
   } catch (error) {
