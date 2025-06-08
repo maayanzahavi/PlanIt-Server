@@ -146,6 +146,18 @@ const getTeamMembers = async (req, res) => {
     }
   };
 
+  const checkAvailability = async (req, res) => {
+    const { email, username } = req.body;
+  
+    try {
+      const result = await userService.checkAvailability(email, username);
+      console.log('Availability check result:', result);
+      res.status(200).json(result); 
+    } catch (err) {
+      console.error('Error in checkAvailability:', err);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
 module.exports = {
     createTeamManager,
     createTeamMember,
@@ -155,4 +167,5 @@ module.exports = {
     updateUser,
     deleteUser,     
     getTeamMembers,
+    checkAvailability,
 };

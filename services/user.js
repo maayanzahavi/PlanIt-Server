@@ -235,18 +235,6 @@ const deleteUser = async (userId) => {
 
         break;
 
-    //   case 'organization_head':
-    //     // Delete the organization
-    //     await Organization.findOneAndDelete({ head: userId });
-
-    //     // Optionally cascade deletion or reassignment of managers/users
-    //     await User.updateMany({ organization: user.organization }, { $set: { organization: null } });
-
-
-    //     await Project.updateMany({ organization: user.organization }, { $set: { organization: null } });
-
-    //     break;
-
       default:
         throw new Error('Unknown user role');
     }
@@ -336,6 +324,25 @@ const getTeamMembers = async (username) => {
   }
 };
 
+const checkAvailability = async (email , username) => {
+  try {
+    const userByEmail = await User.findOne({ email });
+    const userByUsername = await User.findOne({ username });  
+    console.log('Checking availability for email:', email, 'and username:', username);
+    console.log('User found by email:', userByEmail ? userByEmail.email : 'none');
+    console.log('User found by username:', userByUsername ? userByUsername.username : 'none');
+    console.log('Email availability:', !!userByEmail);
+    console.log('Username availability:', !!userByUsername);
+    return {
+      emailTaken: !!userByEmail,
+      usernameTaken: !!userByUsername
+    };    
+  } catch (error) {
+    console.error('Error checking availability:', error);
+    throw new Error('Error checking availability: ' + error.message);
+  }
+};
+
 module.exports = {
     isSigned,
     createTeamManager,
@@ -349,5 +356,6 @@ module.exports = {
     removeTaskFromUser,
     getTeamMembers,
     addTasksToUser,
-    addProjectToUser
+    addProjectToUser,
+    checkAvailability,
 }
