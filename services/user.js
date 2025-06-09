@@ -151,7 +151,32 @@ const createTeamMember = async (userData, organizationId, creatorId) => {
   }
 };
 
-  
+const createOrganizationHead = async (userData) => 
+{
+  try {
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
+    
+    const user = new User({
+      email: userData.email,
+      username: userData.username,
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      role: userData.role || 'user',
+      password: hashedPassword,
+      profilePic: userData.profilePic || '',
+      experience: 0,
+      organization: null
+    });
+
+    await user.validate();
+    await user.save();
+    
+    return user;
+  } catch (error) {
+    console.error('Error creating user:', error);
+    throw new Error('User creation failed: ' + error.message);
+  }
+}
 
   
 const createUser = async (user) => {
@@ -358,4 +383,5 @@ module.exports = {
     addTasksToUser,
     addProjectToUser,
     checkAvailability,
+    createOrganizationHead
 }

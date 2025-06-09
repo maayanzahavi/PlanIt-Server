@@ -25,22 +25,18 @@ const generateUniqueDomain = async (organizationName) => {
   const createOrganization = async (organizationData) => {
     try {
       const domain = await generateUniqueDomain(organizationData.organizationName);
-      const hashedPassword = await bcrypt.hash(organizationData.organizationPassword, 10);
   
-      const headUser = new User({
+      // Create user without organization for now
+      const headUser = await userService.createOrganizationHead({
         email: organizationData.organizationEmail,
         username: organizationData.organizationUsername,
+        password: organizationData.organizationPassword,
         firstName: organizationData.headFirstName,
         lastName: organizationData.headLastName,
-        role: 'organization_head',
-        password: hashedPassword,
-        profilePic: organizationData.profilePic ?? "",
-        experience: 0,
-        organization: null 
+        profilePic: organizationData.profilePic
       });
   
-      await headUser.validate(); // this checks everything before save
-  
+      // Create the organization and link the head user
       const organization = new Organization({
         name: organizationData.organizationName,
         domain,
@@ -48,6 +44,8 @@ const generateUniqueDomain = async (organizationName) => {
       });
   
       await organization.save();
+  
+      // Update the user with the organization reference
       headUser.organization = organization._id;
       await headUser.save();
   
@@ -64,12 +62,12 @@ const generateUniqueDomain = async (organizationName) => {
           domain: organization.domain
         }
       };
-  
     } catch (error) {
       console.error('Error creating organization:', error);
       throw new Error('Error creating organization: ' + error.message);
     }
   };
+  
 const getOrganizationById = async (organizationId) => {
     try {
         const organization = await Organization.findById(organizationId).populate('users').populate('projects').populate('tasks').populate('notifications');

@@ -94,7 +94,7 @@ const getUserByUsername = async (req, res) => {
 
 const updateUser = async (req, res) => {
     const { username } = req.params;
-
+console.log(`updateUser called with username: ${username}`);
     try {
         // Get manager by username
         const user = await userService.getUserByUsername(username);
@@ -151,7 +151,6 @@ const getTeamMembers = async (req, res) => {
   
     try {
       const result = await userService.checkAvailability(email, username);
-      console.log('Availability check result:', result);
       res.status(200).json(result); 
     } catch (err) {
       console.error('Error in checkAvailability:', err);
@@ -167,5 +166,5 @@ module.exports = {
     updateUser,
     deleteUser,     
     getTeamMembers,
-    checkAvailability,
+    checkAvailability
 };
