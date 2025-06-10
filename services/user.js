@@ -161,7 +161,7 @@ const createOrganizationHead = async (userData) =>
       username: userData.username,
       firstName: userData.firstName,
       lastName: userData.lastName,
-      role: userData.role || 'user',
+      role: userData.role || 'organization_head',
       password: hashedPassword,
       profilePic: userData.profilePic || '',
       experience: 0,

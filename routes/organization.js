@@ -25,9 +25,6 @@ router.route("/users/:username")
 router.route("/:domain/users")
   .get(tokenModel.isLoggedIn, organizationController.getAllUsersInOrganization)
   .post(tokenModel.isLoggedIn, userController.createTeamManager)
-// Check user availability
-router.route("/:domain/check-availability")
-  .post(tokenModel.isLoggedIn ,userController.checkAvailability);
 
 
 router.route("/:domain/users/:username")

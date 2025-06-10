@@ -16,6 +16,9 @@ router.route("/:id")
 
   router.get('/public/:id', userController.getUserById); 
 
+// Check user availability
+router.route("/check-availability")
+  .post(userController.checkAvailability);
 
 
   module.exports = router;
