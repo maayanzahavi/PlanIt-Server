@@ -61,7 +61,7 @@ app.use(express.urlencoded({ limit: '100mb', extended: true }));
 // app.get('*', (req, res) => {
 //   res.sendFile(path.join(__dirname + '/build/index.html'));
 // });
-app.use(express.static('/client'));
+app.use(express.static('client'));
 
 
 
