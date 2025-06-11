@@ -151,7 +151,32 @@ const createTeamMember = async (userData, organizationId, creatorId) => {
   }
 };
 
-  
+const createOrganizationHead = async (userData) => 
+{
+  try {
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
+    
+    const user = new User({
+      email: userData.email,
+      username: userData.username,
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      role: userData.role || 'organization_head',
+      password: hashedPassword,
+      profilePic: userData.profilePic || '',
+      experience: 0,
+      organization: null
+    });
+
+    await user.validate();
+    await user.save();
+    
+    return user;
+  } catch (error) {
+    console.error('Error creating user:', error);
+    throw new Error('User creation failed: ' + error.message);
+  }
+}
 
   
 const createUser = async (user) => {
@@ -234,18 +259,6 @@ const deleteUser = async (userId) => {
         await Project.updateMany({ manager: userId }, { $set: { manager: null } });
 
         break;
-
-    //   case 'organization_head':
-    //     // Delete the organization
-    //     await Organization.findOneAndDelete({ head: userId });
-
-    //     // Optionally cascade deletion or reassignment of managers/users
-    //     await User.updateMany({ organization: user.organization }, { $set: { organization: null } });
-
-
-    //     await Project.updateMany({ organization: user.organization }, { $set: { organization: null } });
-
-    //     break;
 
       default:
         throw new Error('Unknown user role');
@@ -336,6 +349,25 @@ const getTeamMembers = async (username) => {
   }
 };
 
+const checkAvailability = async (email , username) => {
+  try {
+    const userByEmail = await User.findOne({ email });
+    const userByUsername = await User.findOne({ username });  
+    console.log('Checking availability for email:', email, 'and username:', username);
+    console.log('User found by email:', userByEmail ? userByEmail.email : 'none');
+    console.log('User found by username:', userByUsername ? userByUsername.username : 'none');
+    console.log('Email availability:', !!userByEmail);
+    console.log('Username availability:', !!userByUsername);
+    return {
+      emailTaken: !!userByEmail,
+      usernameTaken: !!userByUsername
+    };    
+  } catch (error) {
+    console.error('Error checking availability:', error);
+    throw new Error('Error checking availability: ' + error.message);
+  }
+};
+
 module.exports = {
     isSigned,
     createTeamManager,
@@ -349,5 +381,7 @@ module.exports = {
     removeTaskFromUser,
     getTeamMembers,
     addTasksToUser,
-    addProjectToUser
+    addProjectToUser,
+    checkAvailability,
+    createOrganizationHead
 }

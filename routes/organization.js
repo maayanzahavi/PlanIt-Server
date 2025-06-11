@@ -24,7 +24,8 @@ router.route("/users/:username")
 // Users
 router.route("/:domain/users")
   .get(tokenModel.isLoggedIn, organizationController.getAllUsersInOrganization)
-  .post(tokenModel.isLoggedIn, userController.createTeamManager);
+  .post(tokenModel.isLoggedIn, userController.createTeamManager)
+
 
 router.route("/:domain/users/:username")
 .get(tokenModel.isLoggedIn, userController.getUserByUsername)

@@ -94,7 +94,7 @@ const getUserByUsername = async (req, res) => {
 
 const updateUser = async (req, res) => {
     const { username } = req.params;
-
+console.log(`updateUser called with username: ${username}`);
     try {
         // Get manager by username
         const user = await userService.getUserByUsername(username);
@@ -146,6 +146,17 @@ const getTeamMembers = async (req, res) => {
     }
   };
 
+  const checkAvailability = async (req, res) => {
+    const { email, username } = req.body;
+  
+    try {
+      const result = await userService.checkAvailability(email, username);
+      res.status(200).json(result); 
+    } catch (err) {
+      console.error('Error in checkAvailability:', err);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
 module.exports = {
     createTeamManager,
     createTeamMember,
@@ -155,4 +166,5 @@ module.exports = {
     updateUser,
     deleteUser,     
     getTeamMembers,
+    checkAvailability
 };
