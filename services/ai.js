@@ -89,6 +89,62 @@ ${description}
   return { skills, preferences, unmatchedSkills, unmatchedPreferences };
 }
 
+const generateTagsForTask = async (description) => {
+  console.log("Generating tags for task description:", description);
+
+  const systemMessage = `
+You must categorize tags from the provided list into a tags array:
+  - 'tags': technical abilities the person need to have for this task
+
+  IMPORTANT: 
+  - Use ONLY exact matches from the provided tags list
+  - Do not create new tags or modify existing ones
+  - If something doesn't match exactly, skip it
+
+  Return strictly JSON format:
+  { "tags": [...] }
+  `;
+
+  const existingSkills = await Skill.find();
+  const skillLabels = existingSkills.map(skill => skill.label);
+
+  const userPrompt = `
+  You must only use tags from this list:
+  ${skillLabels.join(', ')}
+  
+  Description to analyze:
+  ${description}
+  `;
+
+  // API call to OpenAI to classify the description
+  const completion = await openai.chat.completions.create({
+    model: "gpt-3.5-turbo",
+    messages: [
+      { role: "system", content: systemMessage },
+      { role: "user", content: userPrompt }
+    ],
+    temperature: 0.2
+  });
+
+  let tags = [];
+
+  try {
+    // Parse the OpenAI response
+    const response = JSON.parse(completion.choices[0].message.content);
+    console.log("OpenAI response for tags:", response);
+    tags = response.tags || [];
+    console.log("Generated tags:", tags);
+  } catch (e) {
+    console.error("Failed to parse OpenAI response for tags:", completion.choices[0].message.content);
+  }
+
+  // Fetch skills from the database based on the generated tags
+  tags = await skillService.getSkillsByLabels(tags);
+  console.log("Extracted tags:", tags);
+  return tags;
+}
+
 module.exports = {
-  generateSkillsAndPreferencesFromDescription,
+  generateSkillsAndPreferencesFromDescription, generateTagsForTask
 };
+
