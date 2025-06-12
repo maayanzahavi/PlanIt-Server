@@ -186,11 +186,6 @@ const assignTaskToUser = async (taskId, userId) => {
         task.assignedTo = userId;
         await task.save();
 
-        // Notify user about task assignment
-        await notificationService.handleNewNotification(
-            userId, 
-            `You have been assigned a new task: ${task.title}`
-        );
         return task;
     }
     catch (error) {
