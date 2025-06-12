@@ -217,6 +217,8 @@ const addProjectToUsers = async (projectId, team) => {
             
 
 const sendAssignmentsNotification = async (projectId, initialAssignments) => {
+    console.log('Sending assignment notifications for project:', projectId);
+    console.log('Initial assignments:', initialAssignments);
     try {
         if (!projectId) {
             throw new Error('Project ID is required');
@@ -241,10 +243,12 @@ const sendAssignmentsNotification = async (projectId, initialAssignments) => {
                 initialTasksAssignmentsMap.set(task._id.toString(), null);
             }
         }
+        console.log('Initial tasks assignments map:', initialTasksAssignmentsMap);
 
         for (const task of project.tasks) {
             // Check if the task assignment has changed and notify the user if it has
             const isChangeAssignment = initialTasksAssignmentsMap.get(task._id.toString()) !== task.assignedTo?._id?.toString();
+            console.log('Task:', task._id, 'Assigned to:', task.assignedTo?._id, 'Is change assignment:', isChangeAssignment);
             if (task.assignedTo && isChangeAssignment) {
                 console.log('Sending assignment notification for user:', task.assignedTo._id, 'task:', task.title);
                 const content = `You have been assigned to the task: ${task.title}`;
