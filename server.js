@@ -57,13 +57,7 @@ module.exports.io = io;
 app.use(cors());
 app.use(express.json({ limit: '100mb' }));
 app.use(express.urlencoded({ limit: '100mb', extended: true }));
-// app.use(express.static(path.join(__dirname, '/build')));
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname + '/build/index.html'));
-// });
 app.use(express.static('client'));
-
-
 
 // === ROUTES ===
 app.use("/api/loadBalance", require("./routes/loadBalance"));
