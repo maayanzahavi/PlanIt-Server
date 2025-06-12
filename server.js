@@ -5,8 +5,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const jwt = require('jsonwebtoken');
 const path = require('path');
-
-require('dotenv').config();
+require('dotenv').config(); 
 
 const app = express();
 const server = http.createServer(app); // Required for socket.io
@@ -57,6 +56,8 @@ module.exports.io = io;
 app.use(cors());
 app.use(express.json({ limit: '100mb' }));
 app.use(express.urlencoded({ limit: '100mb', extended: true }));
+
+
 app.use(express.static('client'));
 
 // === ROUTES ===
@@ -67,6 +68,10 @@ app.use('/api/skills', require('./routes/skill'));
 app.use('/api/users', require('./routes/user'));
 app.use('/api', require('./routes/password'));
 app.use('/api/ai', require('./routes/ai'));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client', 'index.html'));
+});
 
 // === CONNECT TO MONGODB & START SERVER ===
 mongoose.connect(process.env.CONNECTION_STRING)
