@@ -25,4 +25,22 @@ const generateTagsForTask = async (req, res) => {
     res.status(500).json({ error: 'Failed to generate tags' });
   }
 }
-module.exports = { generateSkills, generateTagsForTask };
+
+const generateTeamMembersFromDescription = async (req, res) => {
+  try {
+    const { team, description } = req.body;
+    console.log("Received request to generate team members with team and description:", team, description);
+
+    const teamMembers = await aiService.generateTeamMembersFromDescription(team, description);
+    res.json({ teamMembers });
+  } catch (error) {
+    console.error("Error in controller:", error);
+    res.status(500).json({ error: 'Failed to generate team members' });
+  }
+}
+
+module.exports = { 
+  generateSkills,
+   generateTagsForTask,
+  generateTeamMembersFromDescription
+};

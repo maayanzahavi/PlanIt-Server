@@ -1,26 +1,14 @@
 const { OpenAI } = require('openai');
 const Skill = require('../models/skill');
 const skillService = require('./skill');
+const userService = require('./user');
+const user = require('../models/user');
 require('dotenv').config();
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 async function generateSkillsAndPreferencesFromDescription(description) {
   console.log("Classifying using OpenAI:", description);
-
-//   const systemMessage = `
-// You are an assistant that receives a short text describing a new team member and a list of available skill tags.
-// From this text, extract two lists from the available tags:
-// - 'skills': actual skills or technologies the person has
-// - 'preferences': things the person prefers, enjoys, or is interested in
-
-// Respond ONLY with a JSON object like:
-// {
-//   "skills": [...],
-//   "preferences": [...]
-// }
-// Do not include anything else.
-// `;
 
   const systemMessage = `
   You must categorize tags from the provided list into two arrays:
@@ -144,7 +132,81 @@ You must categorize tags from the provided list into a tags array:
   return tags;
 }
 
+const generateTeamMembersFromDescription = async (team, description) => {
+  console.log("Generating team members from description:", description);
+
+  const systemMessage = `
+  You recieve a map of team members with their skills and a description of a project.
+  You must categorize team members from the provided list into a teamMembers array based on the project description and their skills:
+  - 'teamMembers': people who would be suitable for this project
+
+  IMPORTANT: 
+  - Use ONLY exact matches from the provided user list
+  - Do not create new users or modify existing ones
+  - If something doesn't match exactly, skip it
+
+  Return strictly JSON format:
+  { "teamMembers": [...] }
+  `;
+
+// Create a map of team members with their skills
+const memberSkills = new Map();
+
+for (const member of team) {
+  const skills = member.skills.map(skill => skill.label);
+  memberSkills.set(member.username, skills);
+}
+
+// Convert map to a readable string (e.g., username: skill1, skill2)
+const memberSkillsStr = Array.from(memberSkills)
+  .map(([username, skills]) => `${username}: ${skills.join(', ')}`)
+  .join('\n');
+
+// Create the prompt
+const userPrompt = `
+You must only use usernames from this map:
+${memberSkillsStr}
+
+Description to analyze:
+${description}
+`;
+
+  // API call to OpenAI to classify the description
+  const completion = await openai.chat.completions.create({
+    model: "gpt-3.5-turbo",
+    messages: [
+      { role: "system", content: systemMessage },
+      { role: "user", content: userPrompt }
+    ],
+    temperature: 0.2
+  });
+
+  let teamMembers = [];
+  try {
+    // Parse the OpenAI response
+    const response = JSON.parse(completion.choices[0].message.content);
+    console.log("OpenAI response for team members:", response);
+    teamMembers = response.teamMembers || [];
+    console.log("Generated team members:", teamMembers);
+  } catch (e) {
+    console.error("Failed to parse OpenAI response for team members:", completion.choices[0].message.content);
+  }
+
+  // Fetch users from the database based on the generated team members
+  const fetchedTeamMembers = []
+  for (const member of teamMembers) {
+    const user = await userService.getUserByUsername(member);
+    if (user) {
+      fetchedTeamMembers.push(user);
+    }
+  }
+  console.log("Extracted team members:", fetchedTeamMembers);
+  return fetchedTeamMembers;
+}
+
 module.exports = {
-  generateSkillsAndPreferencesFromDescription, generateTagsForTask
+  generateSkillsAndPreferencesFromDescription, 
+  generateTagsForTask,
+  generateTeamMembersFromDescription
 };
 
