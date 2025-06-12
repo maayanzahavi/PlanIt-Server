@@ -5,9 +5,10 @@ const sendAssignmentsNotification = async (req, res) => {
     console.log('Sending assignments notification for project:', req.params.projectId);
     try {
         const projectId = req.params.projectId;
+        const initialAssignments = req.body.initialAssignments || [];
 
         // Notify all team members about the new assignments
-        const notifications = await projectService.sendAssignmentsNotification(projectId);
+        const notifications = await projectService.sendAssignmentsNotification(projectId, initialAssignments);
         res.status(200).json(notifications);
     } catch (error) {
         console.error('Error sending assignments notification:', error);
