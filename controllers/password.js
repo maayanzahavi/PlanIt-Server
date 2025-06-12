@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
-const { sendResetEmail } = require('../services/email');
+const email = require('../services/email');
+const userService = require('../services/user');
 const { generateResetToken, verifyResetToken } = require('../services/token'); 
 
 
@@ -15,7 +16,7 @@ async function sendResetLink(req, res) {
     }
 
     const token = generateResetToken(user._id); 
-    await sendResetEmail(email, token);
+    await email.sendResetEmail(email, token);
 
     res.status(200).json({ message: 'A password reset link has been sent to your email.' });
   } catch (err) {
@@ -29,13 +30,12 @@ async function resetPassword(req, res) {
   const { token, password } = req.body;
 
   try {
-    const decoded = verifyResetToken(token);
-    const hashed = await bcrypt.hash(password, 10);
-    const updatedUser = await User.findByIdAndUpdate(decoded.id, { password: hashed }, { new: true })
-      .populate('organization');
-    
-    if (!updatedUser) return res.status(404).send("User not found");
+     const updatedUser = await userService.resetPassword(token, password)
 
+     if(!updatedUser) {
+      return res.status(400).json({ message: "Invalid or expired token" });
+    }
+    
     res.status(200).json({
       message: "Password updated",
       username: updatedUser.username,

@@ -368,6 +368,19 @@ const checkAvailability = async (email , username) => {
   }
 };
 
+const resetPassword = async (token, password) => {
+ try{
+      const decoded = verifyResetToken(token);
+      const hashed = await bcrypt.hash(password, 10);
+      const updatedUser = await User.findByIdAndUpdate(decoded.id, { password: hashed }, { new: true })
+        .populate('organization');
+      return updatedUser;
+ } catch (err) {
+    console.error('Error resetting password:', err);
+    throw new Error('Error resetting password: ' + err.message);
+  }
+}
+
 module.exports = {
     isSigned,
     createTeamManager,
@@ -383,5 +396,6 @@ module.exports = {
     addTasksToUser,
     addProjectToUser,
     checkAvailability,
-    createOrganizationHead
+    createOrganizationHead,
+    resetPassword
 }
