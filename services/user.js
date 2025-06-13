@@ -194,14 +194,23 @@ const getUserById = async (userId) => {
             .populate('organization')
             .populate('skills')
             .populate('preferences')
-            .populate('projects')
+            .populate({
+                path: 'projects',
+                populate: [
+                    { path: 'team' },
+                    { path: 'manager' },
+                    { path: 'tasks', populate: { path: 'tags' } }
+                ]
+            })
             .populate('team')
             .populate('manager')
             .populate({
                 path: 'tasks',
-                populate: {
-                    path: 'tags',
-                }
+                populate: [{
+                    path: 'tags'
+                }, {
+                    path: 'assignedTo'
+                }]
             })
             .populate('notifications')
             .populate('profilePic');
@@ -221,14 +230,23 @@ const getUserByUsername = async (username) => {
             .populate('organization')
             .populate('skills')
             .populate('preferences')
-            .populate('projects')
+            .populate({
+                path: 'projects',
+                populate: [
+                    { path: 'team' },
+                    { path: 'manager' },
+                    { path: 'tasks', populate: { path: 'tags' } }
+                ]
+            })
             .populate('team')
             .populate('manager')
             .populate({
                 path: 'tasks',
-                populate: {
-                    path: 'tags',
-                }
+                populate: [{
+                    path: 'tags'
+                }, {
+                    path: 'assignedTo'
+                }]
             })
             .populate('notifications')
             .populate('profilePic');
@@ -250,14 +268,23 @@ const updateUser = async (userId, userData) => {
             .populate('organization')
             .populate('skills')
             .populate('preferences')
-            .populate('projects')
+            .populate({
+                path: 'projects',
+                populate: [
+                    { path: 'team' },
+                    { path: 'manager' },
+                    { path: 'tasks', populate: { path: 'tags' } }
+                ]
+            })
             .populate('team')
             .populate('manager')
             .populate({
                 path: 'tasks',
-                populate: {
-                    path: 'tags',
-                }
+                populate: [{
+                    path: 'tags'
+                }, {
+                    path: 'assignedTo'
+                }]
             })
             .populate('notifications');
         if (!updatedUser) {     
