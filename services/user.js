@@ -34,7 +34,6 @@ async function isSigned(username, password) {
     
     const hashedPassword = await bcrypt.hash(rawPassword, 10);
     
-  
       const newUser = new User({
         email: userData.email,
         username: userData.username,
@@ -53,20 +52,20 @@ async function isSigned(username, password) {
         manager: creatorId,
       });
   
-      await newUser.save();
-      console.log("Saved manager user:", newUser);
+      const user = await newUser.save();
+      console.log("Saved manager user:", user);
   
       if (creatorId) {
         const result = await User.findByIdAndUpdate(
           creatorId,
-          { $addToSet: { team: newUser._id } }, 
+          { $addToSet: { team: user._id } }, 
           { new: true }
         ).populate('team'); 
       } else {
         console.warn("No creatorId provided — team not updated.");
       }
   
-      return newUser;
+      return user;
     } catch (error) {
       console.error("Error in createTeamManager service:", error);
       throw new Error('Error creating manager user: ' + error.message);
@@ -191,7 +190,30 @@ const createUser = async (user) => {
 
 const getUserById = async (userId) => {
     try {
-        const user = await User.findById(userId).populate('organization').populate('skills').populate('preferences').populate('projects').populate('team').populate('manager').populate('tasks').populate('notifications').populate('profilePic');
+        const user = await User.findById(userId)
+            .populate('organization')
+            .populate('skills')
+            .populate('preferences')
+            .populate({
+                path: 'projects',
+                populate: [
+                    { path: 'team' },
+                    { path: 'manager' },
+                    { path: 'tasks', populate: { path: 'tags' } }
+                ]
+            })
+            .populate('team')
+            .populate('manager')
+            .populate({
+                path: 'tasks',
+                populate: [{
+                    path: 'tags'
+                }, {
+                    path: 'assignedTo'
+                }]
+            })
+            .populate('notifications')
+            .populate('profilePic');
         if (!user) {
             throw new Error('User not found');
         }
@@ -204,7 +226,30 @@ const getUserById = async (userId) => {
 const getUserByUsername = async (username) => {
     console.log('Fetching user by username:', username);
     try {
-        const user = await User.findOne({ username }).populate('organization').populate('skills').populate('preferences').populate('projects').populate('team').populate('manager').populate('tasks').populate('notifications').populate('profilePic');
+        const user = await User.findOne({ username })
+            .populate('organization')
+            .populate('skills')
+            .populate('preferences')
+            .populate({
+                path: 'projects',
+                populate: [
+                    { path: 'team' },
+                    { path: 'manager' },
+                    { path: 'tasks', populate: { path: 'tags' } }
+                ]
+            })
+            .populate('team')
+            .populate('manager')
+            .populate({
+                path: 'tasks',
+                populate: [{
+                    path: 'tags'
+                }, {
+                    path: 'assignedTo'
+                }]
+            })
+            .populate('notifications')
+            .populate('profilePic');
         if (!user) {
             console.log('User not found');
             throw new Error('User not found');
@@ -219,7 +264,29 @@ const getUserByUsername = async (username) => {
 
 const updateUser = async (userId, userData) => {
     try {
-        const updatedUser = await User.findByIdAndUpdate(userId, userData, { new: true }).populate('organization').populate('skills').populate('preferences').populate('projects').populate('team').populate('manager').populate('tasks').populate('notifications');
+        const updatedUser = await User.findByIdAndUpdate(userId, userData, { new: true })
+            .populate('organization')
+            .populate('skills')
+            .populate('preferences')
+            .populate({
+                path: 'projects',
+                populate: [
+                    { path: 'team' },
+                    { path: 'manager' },
+                    { path: 'tasks', populate: { path: 'tags' } }
+                ]
+            })
+            .populate('team')
+            .populate('manager')
+            .populate({
+                path: 'tasks',
+                populate: [{
+                    path: 'tags'
+                }, {
+                    path: 'assignedTo'
+                }]
+            })
+            .populate('notifications');
         if (!updatedUser) {     
             throw new Error('User not found');
         }
@@ -290,17 +357,6 @@ const removeProjectFromUsers = async (projectId) => {
         throw new Error('Error removing project from users: ' + error.message);
     }
 }
-const removeTaskFromUser = async (taskId) => {
-    try {
-        const users = await User.find({ tasks: taskId });
-        for (const user of users) {
-            user.tasks = user.tasks.filter(task => task.toString() !== taskId);
-            await user.save();
-        }
-    } catch (error) {
-        throw new Error('Error removing task from users: ' + error.message);
-    }
-}
 
 const addTasksToUser = async (userId, taskIds) => {
   try {
@@ -368,6 +424,37 @@ const checkAvailability = async (email , username) => {
   }
 };
 
+const addTaskToUser = async (userId, taskId) => {
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    
+    user.tasks.push(taskId);
+    await user.save();
+    
+    return user;
+  } catch (error) {
+    console.error('Error adding task to user:', error);
+    throw new Error('Error adding task to user: ' + error.message);
+  }
+}
+
+const removeTaskFromUser = async (userId, taskId) => {
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    
+    user.tasks = user.tasks.filter(task => task.toString() !== taskId);
+    await user.save();
+    
+    return user;
+  } catch (error) {
+    console.error('Error removing task from user:', error);
+    throw new Error('Error removing task from user: ' + error.message);
 const resetPassword = async (token, password) => {
  try{
       const decoded = verifyResetToken(token);
@@ -378,6 +465,7 @@ const resetPassword = async (token, password) => {
  } catch (err) {
     console.error('Error resetting password:', err);
     throw new Error('Error resetting password: ' + err.message);
+
   }
 }
 
@@ -397,5 +485,6 @@ module.exports = {
     addProjectToUser,
     checkAvailability,
     createOrganizationHead,
+    addTaskToUser
     resetPassword
 }

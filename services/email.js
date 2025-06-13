@@ -12,7 +12,6 @@ const transporter = nodemailer.createTransport({
 
 async function sendResetEmail(recipientEmail, token) {
   const resetUrl = `https://planit-server-ppjz.onrender.com/PlanIt/reset-password/${token}`;
-
   await transporter.sendMail({
     from: `"PlanIt System" <${process.env.SYSTEM_EMAIL}>`,
     to: recipientEmail,
