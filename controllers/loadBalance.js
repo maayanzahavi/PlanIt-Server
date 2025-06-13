@@ -1,8 +1,9 @@
 const { exec } = require("child_process");
 const path = require("path");
 const fs = require("fs");
-const taskService = require("../services/task"); // Assuming a projectService exists
-const projectService = require("../services/project"); // Assuming a projectService exists
+const taskService = require("../services/task"); 
+const projectService = require("../services/project"); 
+const userService = require("../services/user"); 
 
 const formatData = (project, inputPath) => {
     // Format data for input.json
@@ -41,9 +42,14 @@ const parseAssignments = async (project, outputPath) => {
     project.tasks.forEach(async task => {
       const assignedUserId = assignments[task._id.toString()];
       if (assignedUserId) {
-        task.assignedTo = assignedUserId; // Correctly assign the user ID
-        await taskService.updateTask(task._id, { assignedTo: assignedUserId }); // Pass the user ID to updateTask
+        // Assign the task to the user
+        task.assignedTo = assignedUserId; 
+        await taskService.updateTask(task._id, { assignedTo: assignedUserId }); 
+
+        // Add task to user's tasks
+        await userService.addTaskToUser(assignedUserId, task._id);
       }
+      
     });
     console.log("Assignments updated in project:", project.tasks);
     return project;
