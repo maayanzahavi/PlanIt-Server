@@ -42,6 +42,7 @@ const getProjectById = async (projectId) => {
                     { path: 'tags' }
                 ]
             });
+            console.log('Project found in service:', project);
         if (!project) {
             throw new Error('Project not found');
         }       

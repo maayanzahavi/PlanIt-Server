@@ -1,10 +1,58 @@
 {
   "tasks": [
     {
-      "id": "684400cd730b5c5ab8d4a506",
+      "id": "684c1fa80c9415b2366e6184",
       "skills": [
-        "68177f0ae010f653b19f8834",
-        "68177f0ae010f653b19f8835"
+        "684c1aed0c9415b2366e5fd6",
+        "684c1aee0c9415b2366e5fda",
+        "684c1aef0c9415b2366e5fdc"
+      ],
+      "assignedTo": null,
+      "availabilities": {}
+    },
+    {
+      "id": "684c1fcf0c9415b2366e618c",
+      "skills": [
+        "68177f0ae010f653b19f884c",
+        "68177f0ae010f653b19f8846",
+        "68177f0ae010f653b19f8841"
+      ],
+      "assignedTo": null,
+      "availabilities": {}
+    },
+    {
+      "id": "684c1ff00c9415b2366e6194",
+      "skills": [
+        "68177f0ae010f653b19f883a",
+        "68177f0ae010f653b19f883d",
+        "68177f0ae010f653b19f8848",
+        "68177f0ae010f653b19f8840"
+      ],
+      "assignedTo": null,
+      "availabilities": {}
+    },
+    {
+      "id": "684c200c0c9415b2366e619c",
+      "skills": [
+        "68177f0ae010f653b19f8867",
+        "68177f0ae010f653b19f8846"
+      ],
+      "assignedTo": null,
+      "availabilities": {}
+    },
+    {
+      "id": "684c204a0c9415b2366e61d5",
+      "skills": [
+        "68177f0ae010f653b19f8842"
+      ],
+      "assignedTo": null,
+      "availabilities": {}
+    },
+    {
+      "id": "684c20690c9415b2366e61dd",
+      "skills": [
+        "68177f0ae010f653b19f8850",
+        "68177f0ae010f653b19f884c"
       ],
       "assignedTo": null,
       "availabilities": {}
@@ -12,29 +60,94 @@
   ],
   "members": [
     {
-      "id": "6842d7a9bab24007be319240",
+      "id": "684c1b020c9415b2366e5fe3",
       "skills": [
-        "68177f0ae010f653b19f8833",
-        "68177f0ae010f653b19f8832",
-        "68177f0ae010f653b19f8831"
+        "68177f0ae010f653b19f883d",
+        "684c1aed0c9415b2366e5fd6",
+        "68177f0ae010f653b19f8831",
+        "684c1aee0c9415b2366e5fda",
+        "684c1aef0c9415b2366e5fdc",
+        "684c1aee0c9415b2366e5fd8"
       ],
       "preferences": [
-        "68177f0ae010f653b19f8839",
-        "68177f0ae010f653b19f8837",
-        "68177f0ae010f653b19f883a"
+        "68177f0ae010f653b19f8833",
+        "68177f0ae010f653b19f8835",
+        "68177f0ae010f653b19f8831",
+        "68177f0ae010f653b19f8834"
       ],
       "availability": 10,
-      "experience": 10
+      "experience": 3
     },
     {
-      "id": "680e1e6462b65a41d18d9026",
+      "id": "684c1b660c9415b2366e6018",
       "skills": [
-        "680e1e9062b65a41d18d9033"
+        "68177f0ae010f653b19f8853",
+        "68177f0ae010f653b19f8847",
+        "68177f0ae010f653b19f8843",
+        "68177f0ae010f653b19f8841",
+        "68177f0ae010f653b19f8846"
       ],
-      "preferences": [],
+      "preferences": [
+        "684c1b520c9415b2366e600e",
+        "684c1b520c9415b2366e6010",
+        "684c1b510c9415b2366e600c"
+      ],
       "availability": 10,
-      "experience": 2
+      "experience": 4
+    },
+    {
+      "id": "684c1ba10c9415b2366e6047",
+      "skills": [
+        "68177f0ae010f653b19f8845",
+        "68177f0ae010f653b19f8844",
+        "68177f0ae010f653b19f8841",
+        "68177f0ae010f653b19f8840"
+      ],
+      "preferences": [
+        "684c1aed0c9415b2366e5fd6",
+        "684c1aee0c9415b2366e5fda",
+        "684c1aef0c9415b2366e5fdc"
+      ],
+      "availability": 10,
+      "experience": 4
+    },
+    {
+      "id": "684c1bee0c9415b2366e607e",
+      "skills": [
+        "68177f0ae010f653b19f8843",
+        "68177f0ae010f653b19f8841",
+        "68177f0ae010f653b19f886f",
+        "68177f0ae010f653b19f8846",
+        "68177f0ae010f653b19f884c",
+        "68177f0ae010f653b19f8840",
+        "68177f0ae010f653b19f885c"
+      ],
+      "preferences": [
+        "68177f0ae010f653b19f8844",
+        "68177f0ae010f653b19f883c",
+        "68177f0ae010f653b19f8842",
+        "68177f0ae010f653b19f883f"
+      ],
+      "availability": 10,
+      "experience": 8
+    },
+    {
+      "id": "684c1c420c9415b2366e60b9",
+      "skills": [
+        "68177f0ae010f653b19f8858",
+        "684c1c300c9415b2366e60af",
+        "68177f0ae010f653b19f885b",
+        "68177f0ae010f653b19f8859",
+        "684c1c310c9415b2366e60b1"
+      ],
+      "preferences": [
+        "68177f0ae010f653b19f8843",
+        "68177f0ae010f653b19f8842",
+        "68177f0ae010f653b19f8859"
+      ],
+      "availability": 10,
+      "experience": 5
     }
   ],
-  "preference_vs_urgency": 0.83
+  "preference_vs_urgency": 0.5
 }
