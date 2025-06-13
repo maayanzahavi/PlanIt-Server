@@ -455,6 +455,17 @@ const removeTaskFromUser = async (userId, taskId) => {
   } catch (error) {
     console.error('Error removing task from user:', error);
     throw new Error('Error removing task from user: ' + error.message);
+const resetPassword = async (token, password) => {
+ try{
+      const decoded = verifyResetToken(token);
+      const hashed = await bcrypt.hash(password, 10);
+      const updatedUser = await User.findByIdAndUpdate(decoded.id, { password: hashed }, { new: true })
+        .populate('organization');
+      return updatedUser;
+ } catch (err) {
+    console.error('Error resetting password:', err);
+    throw new Error('Error resetting password: ' + err.message);
+
   }
 }
 
@@ -475,4 +486,5 @@ module.exports = {
     checkAvailability,
     createOrganizationHead,
     addTaskToUser
+    resetPassword
 }
