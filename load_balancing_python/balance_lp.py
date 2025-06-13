@@ -8,7 +8,8 @@ def parse_json():
     input_path = os.path.join(base_dir, "input.json")
     with open(input_path, "r") as f:
         data = json.load(f)
-    return data["tasks"], data["members"]
+    return data["tasks"], data["members"], data.get("preference_vs_urgency", 0.5)
+
 
 # Convert task priority to weight
 def priority_to_weight(priority):

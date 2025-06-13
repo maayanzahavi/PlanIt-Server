@@ -1,40 +1,71 @@
 {
   "tasks": [
     {
-      "id": "684400cd730b5c5ab8d4a506",
+      "id": "684c4052afa67c4f8d07fed0",
       "skills": [
-        "68177f0ae010f653b19f8834",
-        "68177f0ae010f653b19f8835"
+        "68177f0ae010f653b19f8833"
       ],
+      "type": "AI",
+      "weight": 3,
+      "urgency": 3,
       "assignedTo": null,
-      "availabilities": {}
+      "availabilities": {
+        "684c4052afa67c4f8d07febf": 3,
+        "684c4052afa67c4f8d07fecc": 3
+      }
+    },
+    {
+      "id": "684c4052afa67c4f8d07fed4",
+      "skills": [
+        "68177f0ae010f653b19f8842"
+      ],
+      "type": "Dev",
+      "weight": 2,
+      "urgency": 2,
+      "assignedTo": null,
+      "availabilities": {
+        "684c4052afa67c4f8d07febf": 3,
+        "684c4052afa67c4f8d07fecc": 3
+      }
+    },
+    {
+      "id": "684c4052afa67c4f8d07fed8",
+      "skills": [
+        "68177f0ae010f653b19f883d"
+      ],
+      "type": "Optimization",
+      "weight": 1,
+      "urgency": 1,
+      "assignedTo": null,
+      "availabilities": {
+        "684c4052afa67c4f8d07febf": 3,
+        "684c4052afa67c4f8d07fecc": 3
+      }
     }
   ],
   "members": [
     {
-      "id": "6842d7a9bab24007be319240",
+      "id": "684c4052afa67c4f8d07febf",
       "skills": [
-        "68177f0ae010f653b19f8833",
-        "68177f0ae010f653b19f8832",
-        "68177f0ae010f653b19f8831"
+        "Python"
       ],
       "preferences": [
-        "68177f0ae010f653b19f8839",
-        "68177f0ae010f653b19f8837",
-        "68177f0ae010f653b19f883a"
+        "Artificial Intelligence"
       ],
-      "availability": 10,
-      "experience": 10
+      "availability": 3,
+      "experience": 3
     },
     {
-      "id": "680e1e6462b65a41d18d9026",
+      "id": "684c4052afa67c4f8d07fecc",
       "skills": [
-        "680e1e9062b65a41d18d9033"
+        "Artificial Intelligence"
       ],
-      "preferences": [],
-      "availability": 10,
+      "preferences": [
+        "Python"
+      ],
+      "availability": 3,
       "experience": 2
     }
   ],
-  "preference_vs_urgency": 0.83
+  "preference_vs_urgency": 0.5
 }

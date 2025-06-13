@@ -20,7 +20,7 @@ const formatData = (project, inputPath) => {
           id: member._id.toString(),
           skills: member.skills.map(skill => skill),
           preferences: member.preferences,
-          availability: (project.avaliabilites && project.avaliabilites[member._id.toString()]) || 0, // Fallback to 0 if undefined
+          availability: (project.availabilities && project.availabilities[member._id.toString()]) || 0, // Fallback to 0 if undefined
           experience: member.experience
         })),
         preference_vs_urgency: project.preferencesWeight || 0.5, 
@@ -75,7 +75,7 @@ const runLoadBalancer = async (req, res) => {
     formatData(project, inputPath);
 
     // Execute the Python script
-    exec(`python3 ${scriptPath}`, async (error, stdout, stderr) => {
+    exec(`python ${scriptPath}`, async (error, stdout, stderr) => {
       if (error) {
         console.error(`Error executing script: ${error.message}`);
         return res.status(500).json({ error: "Failed to execute load balancing algorithm" });
