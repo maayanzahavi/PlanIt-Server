@@ -3,14 +3,16 @@ const organizationService = require('../services/organization');
 
 const createTeamManager = async (req, res) => {
     try {
-      const { domain } = req.params;
+      const { username, domain } = req.params;
       const organization = await organizationService.getOrganizationByDomain(domain);
       if (!organization) {
         return res.status(404).json({ error: 'Organization not found' });
       }
   
-      const creator = await userService.getUserByUsername(req.user.username);
+      // Get creator's user ID from the request
+      const creator = await userService.getUserByUsername(username);
       const creatorId = creator._id;
+      // Create the team manager
       const newManager = await userService.createTeamManager(req.body, organization._id, creatorId);
   
       console.log("Manager saved:", newManager);
