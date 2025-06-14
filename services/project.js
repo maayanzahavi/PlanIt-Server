@@ -93,10 +93,9 @@ const deleteProject = async (projectId) => {
         }
       }
   
-      //Remove the project from all users
+      // Remove the project from all users
       await userService.removeProjectFromUsers(projectId);
   
-    
       // Delete the project itself
       await Project.findByIdAndDelete(projectId);
   
