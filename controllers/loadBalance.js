@@ -4,24 +4,29 @@ const fs = require("fs");
 const taskService = require("../services/task"); 
 const projectService = require("../services/project"); 
 const userService = require("../services/user"); 
+const { time } = require("console");
 
 const formatData = (project, inputPath) => {
+  console.log("Formatting data for input.json");
+  console.log("Project tasks:", project.tasks);
+
+  const now = Date.now();
+  const weeksLeft = (new Date(project.deadline).getTime() - now) / (1000 * 60 * 60 * 24 * 7) + 1;
+  console.log("Weeks left until deadline:", weeksLeft);
+
     // Format data for input.json
     const inputData = {
         tasks: project.tasks.map(task => ({
           id: task._id.toString(),
           skills: task.tags.map(tag => tag._id),
-          type: task.type,
-          weight: task.weight,
-          urgency: task.urgency,
+          priority: task.priority === "High" ? 5 : task.priority === "Medium" ? 3 : 1,
           assignedTo: task.assignedTo && task.assignedTo._id || null,
-          availabilities: project.availabilities || {} // Include task-specific availabilities
         })),
         members: project.team.map(member => ({
           id: member._id.toString(),
           skills: member.skills.map(skill => skill),
           preferences: member.preferences,
-          availability: (project.availabilities && project.availabilities[member._id.toString()]) || 0, // Fallback to 0 if undefined
+          availability: ((project.avaliabilites && project.avaliabilites[member._id.toString()]) || 0) * weeksLeft, 
           experience: member.experience
         })),
         preference_vs_urgency: project.preferencesWeight || 0.5, 
