@@ -318,33 +318,37 @@ const deleteUser = async (userId) => {
 
     switch (user.role) {
       case 'team_member':
-        // Reassign tasks to manager if exists, otherwise set to null
-        if (user.manager) {
-          await Task.updateMany({ assignedTo: userId }, { assignedTo: user.manager });
-        } else {
-          await Task.updateMany({ assignedTo: userId }, { assignedTo: null });
-        }
-
+        // Reassign tasks to null
+         await Task.updateMany({ assignedTo: userId }, { assignedTo: null });
+       
         // Remove from manager's team
-        await User.updateMany({ team: userId }, { $pull: { team: userId } });
+        await User.findByIdAndUpdate(user.manager, {
+          $pull: { team: userId }
+        });
 
+
+        // Remove from projects
+        await Project.updateMany({ team: userId }, { $pull: { team: userId } });
         break;
 
       case 'manager':
-        // Optional: reassign team members to the organization head or mark them unassigned
-        await User.updateMany({ manager: userId }, { $set: { manager: null } });
+         //Delete all team members under this manager
+        await User.deleteMany({ manager: userId });
 
-        // Optionally handle projects under this manager
-        await Project.updateMany({ manager: userId }, { $set: { manager: null } });
+        //Delete all projects managed by this manager
+        await Project.deleteMany({ manager: userId });
+
+        // Delete from manager's team
+        await User.findByIdAndUpdate(user.manager, {
+          $pull: { team: userId }
+        });
+
 
         break;
 
       default:
         throw new Error('Unknown user role');
     }
-
-    // Remove user from projects
-    await Project.updateMany({ team: userId }, { $pull: { team: userId } });
 
     // Delete the user
     await User.findByIdAndDelete(userId);
