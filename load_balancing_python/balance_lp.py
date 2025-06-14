@@ -2,7 +2,7 @@ import json
 import pulp as p
 import os 
 
-# Parse the input file and return tasks and members
+# Parse the input file and return tasks, members, and urgency weight
 def parse_json():
     base_dir = os.path.dirname(__file__)
     input_path = os.path.join(base_dir, "input.json")
@@ -10,14 +10,6 @@ def parse_json():
         data = json.load(f)
 
     return data["tasks"], data["members"], data["preference_vs_urgency"]
-
-# Convert task priority to weight
-def priority_to_weight(priority):
-    return {
-        'low': 1,
-        'medium': 3,
-        'high': 5
-    }.get(str(priority).lower(), 2)  # default to 2 if unknown
 
 # Create variables for each task-member pair
 def create_variables(tasks, members):
@@ -27,7 +19,7 @@ def create_variables(tasks, members):
             variables[(task["id"], member["id"])] = p.LpVariable(name=f"{task['id']},{member['id']}", cat='Binary')
     return variables
 
-# Scoring function
+# Calculate the score for a task-member pair
 def score(task, member, preference_vs_urgency=0.3):
     score = 0
     preference_weight = preference_vs_urgency
@@ -35,11 +27,13 @@ def score(task, member, preference_vs_urgency=0.3):
 
     for skill in task["skills"]:
         if skill in member["skills"]:
-            score += 10
+            # If the member has this skill, increase the score
+            score += BASE_SCORE
         if skill in member["preferences"]:
-            score += preference_weight * 10
+            # If the member prefers this skill, increase the score considering preference weight
+            score += preference_weight * BASE_SCORE
 
-    urgency = task.get("urgency", 1)
+    urgency = task.get("priority", 2)
     experience = member.get("experience", 1)
     score += urgency_weight * urgency * experience
     return score
@@ -53,15 +47,19 @@ def parse_solution(variables, tasks, members):
                 solution[task["id"]] = member["id"]
     return solution
 
+
+# Constants
+BASE_SCORE = 10
+AVG_TASK_WORKLOAD = 5
+
 # Main optimization
 problem = p.LpProblem('Problem', p.LpMaximize)
 
-# Get tasks and members
+# Get tasks, members, and preference_vs_urgency from JSON
 tasks, members, preference_vs_urgency = parse_json()
 
-# Add weight field to tasks based on priority
-for task in tasks:
-    task["weight"] = priority_to_weight(task.get("priority", "medium"))
+# Calculate the maximum number of urgent tasks per member
+MAX_URGENT_TASKS_PER_MEMBER  = (len(tasks) // len(members)) * 2
 
 # Create variables
 variables = create_variables(tasks, members)
@@ -73,7 +71,7 @@ problem += p.lpSum([
     for member in members
 ])
 
-# Each task assigned to exactly one member
+# Make sure each task is assigned to exactly one member
 for task in tasks:
     if task.get("assignedTo"):
         assigned_member = task["assignedTo"]
@@ -84,9 +82,16 @@ for task in tasks:
 # Member availability constraint
 for member in members:
     problem += p.lpSum([
-        variables[(task["id"], member["id"])] * task["weight"]
+        variables[(task["id"], member["id"])] * AVG_TASK_WORKLOAD
         for task in tasks
     ]) <= member["availability"]
+
+# Ensure all members has a limit of high priority tasks
+for member in members:
+    problem += p.lpSum([
+        variables[(task["id"], member["id"])]
+        for task in tasks if task["priority"] == 5
+    ]) <= MAX_URGENT_TASKS_PER_MEMBER
 
 # Solve the problem
 problem.solve()
