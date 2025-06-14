@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
-const email = require('../services/email');
+const emailService = require('../services/email');
 const userService = require('../services/user');
 const { generateResetToken, verifyResetToken } = require('../services/token'); 
 
@@ -16,7 +16,7 @@ async function sendResetLink(req, res) {
     }
 
     const token = generateResetToken(user._id); 
-    await email.sendResetEmail(email, token);
+    await emailService.sendResetEmail(email, token);
 
     res.status(200).json({ message: 'A password reset link has been sent to your email.' });
   } catch (err) {

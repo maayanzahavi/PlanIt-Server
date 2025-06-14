@@ -9,6 +9,7 @@ const Task = require('../models/task');
 const Project = require('../models/project');
 const bcrypt = require('bcrypt');
 
+const { verifyResetToken } = require('./token');
 
 async function isSigned(username, password) {
   console.log("Checking if user is signed in with username:", username);
@@ -55,6 +56,7 @@ async function isSigned(username, password) {
       const user = await newUser.save();
       console.log("Saved manager user:", user);
   
+      // Add the new manager to the creator's team
       if (creatorId) {
         const result = await User.findByIdAndUpdate(
           creatorId,
@@ -91,6 +93,7 @@ const createTeamMember = async (userData, organizationId, creatorId) => {
         return null;
       }).filter(Boolean);
 
+    // Normalize skills and preferences
     const skillLabelsArray = normalize(userData.skills);
     const preferenceLabelsArray = normalize(userData.preferences);
     const allLabels = [...new Set([...skillLabelsArray, ...preferenceLabelsArray])];
@@ -99,6 +102,7 @@ const createTeamMember = async (userData, organizationId, creatorId) => {
     console.log("Normalized preference labels:", preferenceLabelsArray);
     console.log("Combined unique labels:", allLabels);
 
+    // get or create skills based on all labels
     const allSkills = await skill.getOrCreateSkillsByLabels(allLabels);
     const skillLabels = new Set(skillLabelsArray);
     const preferenceLabels = new Set(preferenceLabelsArray);
@@ -106,6 +110,7 @@ const createTeamMember = async (userData, organizationId, creatorId) => {
     const skillDocs = allSkills.filter(s => skillLabels.has(s.label));
     const preferenceDocs = allSkills.filter(s => preferenceLabels.has(s.label));
 
+    // Save the user with hashed password
     const rawPassword = userData.password && userData.password.trim() !== ""
       ? userData.password
       : "As1234";
@@ -131,6 +136,7 @@ const createTeamMember = async (userData, organizationId, creatorId) => {
     await newUser.save();
     console.log(" [createTeamMember] Saved user:", newUser);
 
+    // Add the new user to the team of the creator
     if (creatorId) {
       const updatedManager = await User.findByIdAndUpdate(
         creatorId,
@@ -238,7 +244,13 @@ const getUserByUsername = async (username) => {
                     { path: 'tasks', populate: { path: 'tags' } }
                 ]
             })
-            .populate('team')
+           .populate({
+              path: 'team',
+              populate: {
+                path: 'team',
+                model: 'User'
+              }
+            }) 
             .populate('manager')
             .populate({
                 path: 'tasks',
