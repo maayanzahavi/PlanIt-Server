@@ -1,7 +1,6 @@
 const userService = require('../services/user');
 const Notification = require('../models/notification');
 require('../models/user');
-const { io } = require('../server');
 
 const createNotification = async (notificationData) => {
     console.log('Creating notification in service :', notificationData);
@@ -103,13 +102,6 @@ const handleNewNotification = async (userId, content) => {
     await addNotificationToUser(
        userId, notification._id
     );
-
-    // Notify manager about task status change
-    io.to(userId).emit('notification', {
-        type: 'TASK_UPDATED',
-        message: notification.content,
-        timestamp: notification.time,
-      });
 }
 
 module.exports = {

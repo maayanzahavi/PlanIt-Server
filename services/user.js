@@ -455,6 +455,9 @@ const removeTaskFromUser = async (userId, taskId) => {
   } catch (error) {
     console.error('Error removing task from user:', error);
     throw new Error('Error removing task from user: ' + error.message);
+  }
+}
+
 const resetPassword = async (token, password) => {
  try{
       const decoded = verifyResetToken(token);
@@ -485,6 +488,6 @@ module.exports = {
     addProjectToUser,
     checkAvailability,
     createOrganizationHead,
-    addTaskToUser
+    addTaskToUser,
     resetPassword
 }
