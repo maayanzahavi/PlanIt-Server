@@ -9,6 +9,7 @@ const Task = require('../models/task');
 const Project = require('../models/project');
 const bcrypt = require('bcrypt');
 
+const { verifyResetToken } = require('./token');
 
 async function isSigned(username, password) {
   console.log("Checking if user is signed in with username:", username);
@@ -455,6 +456,9 @@ const removeTaskFromUser = async (userId, taskId) => {
   } catch (error) {
     console.error('Error removing task from user:', error);
     throw new Error('Error removing task from user: ' + error.message);
+  }
+}
+
 const resetPassword = async (token, password) => {
  try{
       const decoded = verifyResetToken(token);
@@ -485,6 +489,6 @@ module.exports = {
     addProjectToUser,
     checkAvailability,
     createOrganizationHead,
-    addTaskToUser
+    addTaskToUser,
     resetPassword
 }
