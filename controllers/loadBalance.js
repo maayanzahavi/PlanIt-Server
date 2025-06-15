@@ -26,7 +26,7 @@ const formatData = (project, inputPath) => {
           id: member._id.toString(),
           skills: member.skills.map(skill => skill),
           preferences: member.preferences,
-          availability: ((project.avaliabilites && project.avaliabilites[member._id.toString()]) || 0) * weeksLeft, 
+          availability: ((project.availabilities && project.availabilities[member._id.toString()]) || 0) * weeksLeft, 
           experience: member.experience
         })),
         preference_vs_urgency: project.preferencesWeight || 0.5, 

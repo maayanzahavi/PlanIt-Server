@@ -1,9 +1,10 @@
 {
   "tasks": [
     {
-      "id": "684d5b3d7e131e3c505ab06d",
+      "id": "684db62b7412066de8189618",
       "skills": [
-        "68177f0ae010f653b19f8834"
+        "68177f0ae010f653b19f8837",
+        "68177f0ae010f653b19f8832"
       ],
       "priority": 3,
       "assignedTo": null
@@ -11,21 +12,59 @@
   ],
   "members": [
     {
-      "id": "684c1c420c9415b2366e60b9",
+      "id": "684c1b020c9415b2366e5fe3",
       "skills": [
-        "68177f0ae010f653b19f8858",
-        "684c1c300c9415b2366e60af",
-        "68177f0ae010f653b19f885b",
-        "68177f0ae010f653b19f8859",
-        "684c1c310c9415b2366e60b1"
+        "68177f0ae010f653b19f883d",
+        "684c1aed0c9415b2366e5fd6",
+        "68177f0ae010f653b19f8831",
+        "684c1aee0c9415b2366e5fda",
+        "684c1aef0c9415b2366e5fdc",
+        "684c1aee0c9415b2366e5fd8"
       ],
       "preferences": [
-        "68177f0ae010f653b19f8843",
-        "68177f0ae010f653b19f8842",
-        "68177f0ae010f653b19f8859"
+        "68177f0ae010f653b19f8833",
+        "68177f0ae010f653b19f8835",
+        "68177f0ae010f653b19f8831",
+        "68177f0ae010f653b19f8834"
       ],
-      "availability": 19.250996147486774,
-      "experience": 5
+      "availability": 16.081782787698412,
+      "experience": 3
+    },
+    {
+      "id": "684c1ba10c9415b2366e6047",
+      "skills": [
+        "68177f0ae010f653b19f8845",
+        "68177f0ae010f653b19f8844",
+        "68177f0ae010f653b19f8841",
+        "68177f0ae010f653b19f8840"
+      ],
+      "preferences": [
+        "684c1aed0c9415b2366e5fd6",
+        "684c1aee0c9415b2366e5fda",
+        "684c1aef0c9415b2366e5fdc"
+      ],
+      "availability": 16.081782787698412,
+      "experience": 4
+    },
+    {
+      "id": "684c1bee0c9415b2366e607e",
+      "skills": [
+        "68177f0ae010f653b19f8843",
+        "68177f0ae010f653b19f8841",
+        "68177f0ae010f653b19f886f",
+        "68177f0ae010f653b19f8846",
+        "68177f0ae010f653b19f884c",
+        "68177f0ae010f653b19f8840",
+        "68177f0ae010f653b19f885c"
+      ],
+      "preferences": [
+        "68177f0ae010f653b19f8844",
+        "68177f0ae010f653b19f883c",
+        "68177f0ae010f653b19f8842",
+        "68177f0ae010f653b19f883f"
+      ],
+      "availability": 16.081782787698412,
+      "experience": 8
     }
   ],
   "preference_vs_urgency": 0.5

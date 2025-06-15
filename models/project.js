@@ -24,7 +24,7 @@ const ProjectSchema = new Schema({
         ref: 'Task',
         default: []
     }],
-    avaliabilities: {
+    Availabilities: {
         type: Map,
         keyType: Schema.Types.ObjectId,
         of: Number,
