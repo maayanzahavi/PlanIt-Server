@@ -22,6 +22,8 @@ const createTaskComment = async (taskId, username, content) => {
             date: new Date()
         });
         await newComment.save();
+
+        // Add the comment to the task's comments array
         task.comments.push(newComment._id);
         await task.save();
 
