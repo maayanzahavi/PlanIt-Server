@@ -2,13 +2,8 @@ const taskCommentService = require('../services/taskComment');
 
 const createTaskComment = async (req, res) => {
     console.log('Creating task comment in controller:', req.body);
-    const { domain, username, projectId, taskId } = req.params;
+    const { domain, username, taskId } = req.params;
     const { content } = req.body;
-    console.log('Content:', content);
-    console.log('Domain:', domain);
-    console.log('Username:', username);
-    console.log('Project ID:', projectId);
-    console.log('Task ID:', taskId);
 
     try {
         const comment = await taskCommentService.createTaskComment(taskId, username, content);

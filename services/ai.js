@@ -150,22 +150,22 @@ const generateTeamMembersFromDescription = async (team, description) => {
   `;
 
 // Create a map of team members with their skills
-const memberSkills = new Map();
+const memberSkillsMap = new Map();
 
 for (const member of team) {
   const skills = member.skills.map(skill => skill.label);
-  memberSkills.set(member.username, skills);
+  memberSkillsMap.set(member.username, skills);
 }
 
 // Convert map to a readable string (e.g., username: skill1, skill2)
-const memberSkillsStr = Array.from(memberSkills)
+const memberSkillsMapStr = Array.from(memberSkillsMap)
   .map(([username, skills]) => `${username}: ${skills.join(', ')}`)
   .join('\n');
 
 // Create the prompt
 const userPrompt = `
 You must only use usernames from this map:
-${memberSkillsStr}
+${memberSkillsMapStr}
 
 Description to analyze:
 ${description}

@@ -15,8 +15,8 @@ const createProject = async (req, res) => {
     console.log('Project members:', newProject.team);
 
     // Make project tasks an array of task IDs
-    const tasks = newProject.tasks || [];
-    newProject.tasks = tasks.map(task => task._id);
+    const tempTasks = newProject.tasks || [];
+    newProject.tasks = tempTasks.map(task => task._id);
 
     // Create project
     try {

@@ -8,19 +8,21 @@ const mongoose = require('mongoose');
 const createProject = async (project , organizationId, managerId) => {
     console.log('Creating project in service:', project.title);
     const newProject = new Project(project);
-    console.log('New project:', newProject.title);
+
+    // Set organization and manager for project
     newProject.organization = organizationId;
     newProject.manager = managerId;
     
     try {
         await newProject.save();
+
         // Change addTasksToProject to addProjectToTasks
         if (project.tasks && project.tasks.length > 0) {
             await addProjectToTasks(newProject._id, newProject.tasks);
         }
 
+        // Add project to each team member
         if (project.team && project.team.length > 0) {
-            // Add project to each team member
             await addProjectToUsers(newProject._id, [...project.team, managerId]);
         }
         return newProject;
@@ -86,17 +88,16 @@ const deleteProject = async (projectId) => {
         throw new Error('Project not found');
       }
   
-      //Delete all tasks associated with the project
+      // Delete all tasks associated with the project
       if (Array.isArray(project.tasks)) {
         for (const taskId of project.tasks) {
           await taskService.deleteTask(taskId.toString()); 
         }
       }
   
-      //Remove the project from all users
+      // Remove the project from all users
       await userService.removeProjectFromUsers(projectId);
   
-    
       // Delete the project itself
       await Project.findByIdAndDelete(projectId);
   
