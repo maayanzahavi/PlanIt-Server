@@ -15,7 +15,7 @@ async function sendResetLink(req, res) {
       return res.status(404).json({ message: 'No user with that email exists.' });
     }
 
-    const token = generateResetToken(user._id); 
+    const token = generateResetToken(user._id);
     await emailService.sendResetEmail(email, token);
 
     res.status(200).json({ message: 'A password reset link has been sent to your email.' });
