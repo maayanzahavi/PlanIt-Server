@@ -7,3 +7,4 @@ client
 *.pyc
 python-algo/input.json
 python-algo/output.json
+/Client
