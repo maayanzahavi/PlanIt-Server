@@ -1,8 +1,6 @@
 const Project = require('../models/project');  
-const userService = require('./user');
 const Task = require('../models/task');
 const notificationService = require('./notification');
-const taskService = require('./task');
 const mongoose = require('mongoose');
 
 const createProject = async (project , organizationId, managerId) => {
@@ -16,7 +14,7 @@ const createProject = async (project , organizationId, managerId) => {
     try {
         await newProject.save();
 
-        // Change addTasksToProject to addProjectToTasks
+        //Add project to tasks
         if (project.tasks && project.tasks.length > 0) {
             await addProjectToTasks(newProject._id, newProject.tasks);
         }
@@ -90,12 +88,14 @@ const deleteProject = async (projectId) => {
   
       // Delete all tasks associated with the project
       if (Array.isArray(project.tasks)) {
+        const taskService = require('./task');
         for (const taskId of project.tasks) {
           await taskService.deleteTask(taskId.toString()); 
         }
       }
   
       // Remove the project from all users
+      const userService = require('./user');
       await userService.removeProjectFromUsers(projectId);
   
       // Delete the project itself
@@ -187,6 +187,7 @@ const addTasksToUsers = async (tasks, team) => {
         const fetchedTasks = await Task.find({ _id: { $in: tasksAsObjectIds } });
         console.log('Fetched tasks:', fetchedTasks);
         
+        const userService = require('./user');
         for (const member of team) {
             const memberId = member._id?.toString() || member.toString();
             const memberTasks = fetchedTasks.filter(task => task.assignedTo.toString() === memberId);
@@ -207,6 +208,7 @@ const addProjectToUsers = async (projectId, team) => {
     console.log('Team:', team);
 
     try {
+        const userService = require('./user');
         for (const member of team) {
             console.log('Adding project to user:', member._id);
             await userService.addProjectToUser(member._id, projectId);

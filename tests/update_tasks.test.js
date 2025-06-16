@@ -1,3 +1,8 @@
+// User Story: Update Programming Task to Completed
+// This test checks that a manager can update a task's status to 'completed'.
+// It sends a PUT request to the task update endpoint with valid credentials,
+// and verifies that the response status is 200 and the task status was updated successfully.
+
 const request = require('supertest');
 const { spawn } = require('child_process');
 const path = require('path');

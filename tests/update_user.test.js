@@ -1,3 +1,8 @@
+// User Story: Update Team Member Profile
+// This test verifies that a manager can update a team member's profile.
+// It sends a PUT request to update the team member's first name and checks that the response
+// status is 200 and the updated name is correctly reflected in the response body.
+
 const request = require('supertest');
 const { spawn } = require('child_process');
 const path = require('path');

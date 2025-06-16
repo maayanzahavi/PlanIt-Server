@@ -9,6 +9,7 @@ const Task = require('../models/task');
 const Project = require('../models/project');
 const bcrypt = require('bcrypt');
 
+
 const { verifyResetToken } = require('./token');
 
 async function isSigned(username, password) {
@@ -79,36 +80,10 @@ async function isSigned(username, password) {
 
 const createTeamMember = async (userData, organizationId, creatorId) => {
   try {
-    console.log("=== [createTeamMember] Starting creation process ===");
-    console.log("Raw userData:", userData);
-    console.log("Organization ID:", organizationId);
-    console.log("Creator ID:", creatorId);
+    //Create lists of tags by id
+    const skillDocs = userData.skills.map(tag => tag._id);
+    const preferenceDocs = userData.preferences.map(tag => tag._id);
 
-    // Normalize labels
-    const normalize = (arr) =>
-      (arr || []).map(s => {
-        if (!s) return null;
-        if (typeof s === 'string') return s;
-        if (s.label) return s.label;
-        return null;
-      }).filter(Boolean);
-
-    // Normalize skills and preferences
-    const skillLabelsArray = normalize(userData.skills);
-    const preferenceLabelsArray = normalize(userData.preferences);
-    const allLabels = [...new Set([...skillLabelsArray, ...preferenceLabelsArray])];
-
-    console.log("Normalized skill labels:", skillLabelsArray);
-    console.log("Normalized preference labels:", preferenceLabelsArray);
-    console.log("Combined unique labels:", allLabels);
-
-    // get or create skills based on all labels
-    const allSkills = await skill.getOrCreateSkillsByLabels(allLabels);
-    const skillLabels = new Set(skillLabelsArray);
-    const preferenceLabels = new Set(preferenceLabelsArray);
-
-    const skillDocs = allSkills.filter(s => skillLabels.has(s.label));
-    const preferenceDocs = allSkills.filter(s => preferenceLabels.has(s.label));
 
     // Save the user with hashed password
     const rawPassword = userData.password && userData.password.trim() !== ""
@@ -126,8 +101,8 @@ const createTeamMember = async (userData, organizationId, creatorId) => {
       profilePic: userData.profilePic ?? "",
       experience: userData.experience || 0,
       organization: organizationId,
-      skills: skillDocs.map(doc => doc._id),
-      preferences: preferenceDocs.map(doc => doc._id),
+      skills: skillDocs,
+      preferences: preferenceDocs,
       tasks: [],
       notifications: [],
       manager: creatorId,
@@ -326,7 +301,6 @@ const deleteUser = async (userId) => {
           $pull: { team: userId }
         });
 
-
         // Remove from projects
         await Project.updateMany({ team: userId }, { $pull: { team: userId } });
         break;
@@ -335,8 +309,14 @@ const deleteUser = async (userId) => {
          //Delete all team members under this manager
         await User.deleteMany({ manager: userId });
 
+        // Get all projects managed by this manager
+        const projects = await Project.find({ manager: userId });
+
         //Delete all projects managed by this manager
-        await Project.deleteMany({ manager: userId });
+        const projectService = require('./project');
+        for (const project of projects) {
+          await projectService.deleteProject(project._id);
+        }
 
         // Delete from manager's team
         await User.findByIdAndUpdate(user.manager, {
@@ -461,9 +441,10 @@ const removeTaskFromUser = async (userId, taskId) => {
   try {
     const user = await User.findById(userId);
     if (!user) {
-      throw new Error('User not found');
+      console.warn(`Assigned user ${userId} not found while removing task ${taskId}`);
+      return;
     }
-    
+
     user.tasks = user.tasks.filter(task => task.toString() !== taskId);
     await user.save();
     
@@ -472,7 +453,8 @@ const removeTaskFromUser = async (userId, taskId) => {
     console.error('Error removing task from user:', error);
     throw new Error('Error removing task from user: ' + error.message);
   }
-}
+};
+
 
 const resetPassword = async (token, password) => {
  try{
