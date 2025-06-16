@@ -1,3 +1,15 @@
+/**
+ * Full integration test for the load balancer system.
+ * 
+ * This test suite performs the following steps:
+ * 1. Starts the backend server.
+ * 2. Creates two new team members with distinct skills and preferences.
+ * 3. Creates three tasks with different tags and priorities within a project.
+ * 4. Executes the load balancer and verifies that each task is assigned to one of the two team members.
+ * 
+ * The test ensures that task distribution takes into account skills, preferences, availability, and urgency.
+ */
+
 const request = require('supertest');
 const { spawn } = require('child_process');
 const path = require('path');

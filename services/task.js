@@ -1,12 +1,11 @@
 const mongoose = require('mongoose');
 const Task = require('../models/task');
 require('../models/user');
-const userService = require('./user');
 const notificationService = require('./notification');
-const Project = require('../models/project');
 require('../models/skill');
 require('../models/taskComment');   
 require('../server');
+const Project = require('../models/project')
 
 const createTask = async (task) => {
     console.log('Creating task in service:', task);
@@ -57,23 +56,21 @@ const updateTask = async (taskId, taskData) => {
 
 const deleteTask = async (taskId) => {
     try {
-      const task = await Task.findById(taskId);
-      if (!task) {
-        console.log("No task found to delete:", taskId);
-        throw new Error('Task not found');
-      }
-  
-      console.log("Task to delete:", task._id);
+        const task = await Task.findById(taskId);
+        if (!task) {
+        console.warn(`No task found to delete: ${taskId}`);
+        return; 
+        }
+
   
       // Delete task from user's tasks if assigned
       if (task.assignedTo) {
-        console.log("Removing task from user:", task.assignedTo);
+        const userService = require('./user');
         await userService.removeTaskFromUser(task.assignedTo, taskId);
       }
   
       // Remove task from project's tasks if it belongs to a project
       if (task.project) {
-        console.log("Removing task from project:", task.project.title);
         await Project.findByIdAndUpdate(task.project, {
           $pull: { tasks: taskId }
         });
@@ -167,6 +164,7 @@ const assignTaskToUser = async (taskId, userId) => {
         if (!task) {
             throw new Error('Task not found');
         }
+        const userService = require('./user');
         const user = await userService.getUserById(userId);
         if (!user) {
             throw new Error('User not found');
