@@ -3,7 +3,7 @@ import pulp as p
 import os 
 
 # Parse the input file and return tasks, members, and urgency weight
-def parse_json():
+def parse_input_json():
     base_dir = os.path.dirname(__file__)
     input_path = os.path.join(base_dir, "input.json")
     with open(input_path, "r") as f:
@@ -27,15 +27,15 @@ def score(task, member, preference_vs_urgency=0.3):
 
     for skill in task["skills"]:
         if skill in member["skills"]:
-            # If the member has this skill, increase the score
-            score += BASE_SCORE
+            # If the member has this skill, increase the score based on urgency weight
+            score += urgency_weight * BASE_SCORE
         if skill in member["preferences"]:
-            # If the member prefers this skill, increase the score considering preference weight
+            # If the member prefers this skill, increase the score based preference weight
             score += preference_weight * BASE_SCORE
 
-    urgency = task.get("priority", 2)
+    priority = task.get("priority", 2)
     experience = member.get("experience", 1)
-    score += urgency_weight * urgency * experience
+    score += urgency_weight * priority * experience
     return score
 
 # Parse the solution
@@ -47,19 +47,17 @@ def parse_solution(variables, tasks, members):
                 solution[task["id"]] = member["id"]
     return solution
 
-
 # Constants
-BASE_SCORE = 10
-AVG_TASK_WORKLOAD = 5
+BASE_SCORE = 10 # Base score for a task-member pair
+AVG_TASK_WORKLOAD = 6 # An average workload for a task
 
 # Main optimization
-problem = p.LpProblem('Problem', p.LpMaximize)
+problem = p.LpProblem('Load Balance', p.LpMaximize)
 
 # Get tasks, members, and preference_vs_urgency from JSON
-tasks, members, preference_vs_urgency = parse_json()
+tasks, members, preference_vs_urgency = parse_input_json()
 
-# Calculate the maximum number of urgent tasks per member
-MAX_URGENT_TASKS_PER_MEMBER  = (len(tasks) // len(members)) * 2
+MAX_URGENT_TASKS_PER_MEMBER  = (len(tasks) // len(members)) * 2 # Maximum number of urgent tasks per member
 
 # Create variables
 variables = create_variables(tasks, members)
@@ -73,11 +71,12 @@ problem += p.lpSum([
 
 # Make sure each task is assigned to exactly one member
 for task in tasks:
-    if task.get("assignedTo"):
-        assigned_member = task["assignedTo"]
-        problem += variables[(task["id"], assigned_member)] == 1
-    else:
-        problem += p.lpSum([variables[(task["id"], member["id"])] for member in members]) == 1
+    problem += p.lpSum([variables[(task["id"], member["id"])] for member in members]) == 1
+
+# Make sure each member is assigned to at lest one task
+if len(members) >= len(tasks):
+    for member in members:
+        problem += p.lpSum([variables[(task["id"], member["id"])] for task in tasks]) >= 1
 
 # Member availability constraint
 for member in members:

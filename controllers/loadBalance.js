@@ -6,13 +6,16 @@ const projectService = require("../services/project");
 const userService = require("../services/user"); 
 const { time } = require("console");
 
-const formatData = (project, inputPath) => {
+const parseDataToInputFile = (project, inputPath) => {
   console.log("Formatting data for input.json");
   console.log("Project tasks:", project.tasks);
 
+  // Calculate weeks left until deadline to use later
   const now = Date.now();
   const weeksLeft = (new Date(project.deadline).getTime() - now) / (1000 * 60 * 60 * 24 * 7) + 1;
   console.log("Weeks left until deadline:", weeksLeft);
+
+  const teamSize = project.team.length;
 
     // Format data for input.json
     const inputData = {
@@ -26,7 +29,7 @@ const formatData = (project, inputPath) => {
           id: member._id.toString(),
           skills: member.skills.map(skill => skill),
           preferences: member.preferences,
-          availability: ((project.availabilities && project.availabilities[member._id.toString()]) || 0) * weeksLeft, 
+          availability: (((project.availabilities && project.availabilities[member._id.toString()]) || 0) * weeksLeft) / teamSize * 2, 
           experience: member.experience
         })),
         preference_vs_urgency: project.preferencesWeight || 0.5, 
@@ -68,22 +71,23 @@ const runLoadBalancer = async (req, res) => {
   console.log("Request body:", req.body);
   const projectId = req.params.projectId;
   const project = req.body; 
+
+  // Save useful paths
   const scriptPath = path.join(__dirname, "../load_balancing_python/balance_lp.py");
   const inputPath = path.join(__dirname, "../load_balancing_python/input.json");
   const outputPath = path.join(__dirname, "../load_balancing_python/output.json");
 
-
   console.log("Running load balancer with project:", project.title);
   console.log("Team skills:", project.team.map(member => member.skills.map(skill => skill)));
 
-  try {
-    // Validate project object
-    if (!project || !project.tasks || !project.team) {
-      return res.status(400).json({ error: "Invalid project data" });
-    }
+  // Validate project object
+  if (!project || !project.tasks || !project.team) {
+    return res.status(400).json({ error: "Invalid project data" });
+  }
 
+  try {
     // Export data to input file
-    formatData(project, inputPath);
+    parseDataToInputFile(project, inputPath);
 
     // Execute the Python script
     exec(`python ${scriptPath}`, async (error, stdout, stderr) => {
