@@ -1,70 +1,70 @@
+/**
+ * Integration test for creating a new programming project.
+ *
+ * This test performs the following steps:
+ * 1. Starts the backend server before executing the test.
+ * 2. Sends a POST request to create a new project for a given manager.
+ * 3. Verifies that the response returns status 201 and includes the correct project title.
+ *
+ * This test covers User Story 1: "As a manager, I want to create a new project."
+ */
+
+
 const request = require('supertest');
 const { spawn } = require('child_process');
 const path = require('path');
-const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 let serverProcess;
 
+// Generate a JWT token for testing
+const jwt = require('jsonwebtoken');
 const token = jwt.sign(
   {
-    _id: '680e1e6462b65a41d18d9025',
-    username: 'manager1',
-    role: 'manager'
+    _id: '680e1e6462b65a41d18d9025', 
+    username: 'manager1'
   },
   process.env.JWT_SECRET,
   { expiresIn: '1h' }
 );
 
-// Launch the server before running tests
+// Start the server before running tests
 beforeAll((done) => {
   serverProcess = spawn('node', [path.join(__dirname, '../server.js')], {
     stdio: 'inherit',
   });
+
+ // Wait for the server to start
   setTimeout(done, 4000);
 });
 
-// Kill the server after tests
+// Stop the server after tests are done
 afterAll(() => {
   if (serverProcess) {
     serverProcess.kill();
   }
 });
 
-describe('Load Balancer Integration Test (reusing existing data)', () => {
-  const domain = 'tech-nova';
-  const managerUsername = 'manager1';
-  const projectId = '684c226eacba883712d1cdf9';
-  let projectData;
+// Test for creating a programming project
+describe('Project API', () => {
+  test('User Story 1: should create a programming project', async () => {
+    const projectData = {
+      title: 'Build E-commerce Website',
+      description: 'Some description',
+      tasks: [],     
+      team: []
+    };
 
-  test('should fetch existing project with team and tasks', async () => {
-    // Get project from the backend
-    const res = await request('http://localhost:8800')
-      .get(`/api/projects/${projectId}`) // You must ensure this route exists
-      .set('Authorization', `Bearer ${token}`);
+    const domain = 'tech-nova';
+    const username = 'manager1';
 
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toBeDefined();
-    expect(res.body.tasks.length).toBeGreaterThan(0);
-    expect(res.body.team.length).toBeGreaterThan(0);
-
-    projectData = res.body; // Store full project object to pass into load balancer
-  });
-
-  test('should run the load balancer and assign tasks', async () => {
-    const res = await request('http://localhost:8800')
-      .put(`/api/loadBalance/${projectId}`)
-      .set('Authorization', `Bearer ${token}`)
-      .send(projectData); // required by your controller to populate input.json
-
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toBeDefined();
-    expect(res.body.tasks).toBeDefined();
-    expect(res.body.tasks.length).toBeGreaterThan(0);
-
-    console.log('Updated project task assignments:', res.body.tasks.map(t => ({
-      title: t.title,
-      assignedTo: t.assignedTo
-    })));
+    const response = await request('http://localhost:8800')
+            .post(`/api/organizations/${domain}/users/${username}/projects`)
+            .set('Authorization', `Bearer ${token}`)
+            .send(projectData);
+    
+    // Check if the response is successful
+    expect(response.statusCode).toBe(201);
+    expect(response.body.title).toBe('Build E-commerce Website');
   });
 });

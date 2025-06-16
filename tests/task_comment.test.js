@@ -1,3 +1,14 @@
+/**
+ * Integration test for adding a comment to a task.
+ *
+ * This test performs the following:
+ * 1. Starts the backend server before the test begins.
+ * 2. Sends a POST request to add a new comment to a specific task as a team member.
+ * 3. Verifies that the response status is 201 (Created) and that the returned comment includes the correct content and author.
+ *
+ * This test ensures that team members can comment on tasks successfully.
+ */
+
 const request = require('supertest');
 const { spawn } = require('child_process');
 const path = require('path');
