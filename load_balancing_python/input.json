@@ -1,28 +1,33 @@
 {
   "tasks": [
     {
-      "id": "68502f595db6160e042634e9",
+      "id": "68516ff4dbe0f49c19c7ca54",
       "skills": [
-        "68177f0ae010f653b19f8872"
+        "68177f0ae010f653b19f8831",
+        "68177f0ae010f653b19f8834",
+        "68177f0ae010f653b19f8836"
       ],
       "priority": 1,
       "assignedTo": null
     },
     {
-      "id": "68502f695db6160e04263d03",
+      "id": "68517005dbe0f49c19c7ca5b",
       "skills": [
-        "68177f0ae010f653b19f883d"
+        "68177f0ae010f653b19f8845",
+        "68177f0ae010f653b19f8844",
+        "68177f0ae010f653b19f8840"
       ],
       "priority": 1,
       "assignedTo": null
     },
     {
-      "id": "68502f795db6160e042645f0",
+      "id": "68517017dbe0f49c19c7ca62",
       "skills": [
-        "68177f0ae010f653b19f8848",
-        "68177f0ae010f653b19f8846"
+        "68177f0ae010f653b19f8831",
+        "68177f0ae010f653b19f8846",
+        "68177f0ae010f653b19f884c"
       ],
-      "priority": 3,
+      "priority": 1,
       "assignedTo": null
     }
   ],
@@ -57,7 +62,7 @@
           "label": "Natural Language Processing"
         }
       ],
-      "availability": 24.829527579365077,
+      "availability": 34.6951125,
       "experience": 3
     },
     {
@@ -81,62 +86,66 @@
         }
       ],
       "preferences": [],
-      "availability": 24.829527579365077,
+      "availability": 34.6951125,
       "experience": 4
     },
     {
-      "id": "684c1bee0c9415b2366e607e",
+      "id": "684c1c420c9415b2366e60b9",
       "skills": [
         {
-          "_id": "68177f0ae010f653b19f8843",
-          "label": "Java"
+          "_id": "68177f0ae010f653b19f885b",
+          "label": "Project Management"
         },
         {
-          "_id": "68177f0ae010f653b19f8841",
-          "label": "JavaScript"
+          "_id": "68177f0ae010f653b19f8858",
+          "label": "Agile"
         },
         {
-          "_id": "68177f0ae010f653b19f886f",
-          "label": "Mentoring"
+          "_id": "68177f0ae010f653b19f8848",
+          "label": "MongoDB"
         },
         {
-          "_id": "68177f0ae010f653b19f8846",
-          "label": "Node.js"
-        },
-        {
-          "_id": "68177f0ae010f653b19f884c",
-          "label": "RESTful APIs"
-        },
-        {
-          "_id": "68177f0ae010f653b19f8840",
-          "label": "React"
-        },
-        {
-          "_id": "68177f0ae010f653b19f885c",
-          "label": "Software Development Life Cycle"
-        }
-      ],
-      "preferences": [
-        {
-          "_id": "68177f0ae010f653b19f8844",
-          "label": "HTML"
-        },
-        {
-          "_id": "68177f0ae010f653b19f883c",
-          "label": "Mathematics"
+          "_id": "68177f0ae010f653b19f885b",
+          "label": "Project Management"
         },
         {
           "_id": "68177f0ae010f653b19f8842",
           "label": "Python"
         },
         {
-          "_id": "68177f0ae010f653b19f883f",
-          "label": "Support Vector Machines"
+          "_id": "68177f0ae010f653b19f884c",
+          "label": "RESTful APIs"
+        },
+        {
+          "_id": "68177f0ae010f653b19f8859",
+          "label": "Scrum"
         }
       ],
-      "availability": 24.829527579365077,
-      "experience": 8
+      "preferences": [
+        {
+          "_id": "68177f0ae010f653b19f8843",
+          "label": "Java"
+        },
+        {
+          "_id": "68177f0ae010f653b19f8842",
+          "label": "Python"
+        },
+        {
+          "_id": "68177f0ae010f653b19f8859",
+          "label": "Scrum"
+        },
+        {
+          "_id": "68177f0ae010f653b19f883e",
+          "label": "Neural Networks"
+        },
+        {
+          "_id": "68177f0ae010f653b19f8872",
+          "label": "UX/UI Design"
+        }
+      ],
+      "availability": 34.6951125,
+      "experience": 5
     }
   ],
-  "preference_vs_urgency": 0.28
+  "preference_vs_urgency": 0.5
 }
