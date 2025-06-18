@@ -111,11 +111,17 @@ const deleteProject = async (req, res) => {
 
   const resetAllTasksAssignments = async (req, res) => {
     const { projectId } = req.params;
+<<<<<<< HEAD
     console.log('Resetting all task assignments for project:', projectId);
     try {
         const project = await projectService.getProjectById(projectId);
         if (!project) {
             console.log('Project not found:', projectId);
+=======
+    try {
+        const project = await projectService.getProjectById(projectId);
+        if (!project) {
+>>>>>>> aacc53df18318c0629129b47f1b079433e8e2413
             return res.status(404).json({ error: 'Project not found' });
         }   
 
