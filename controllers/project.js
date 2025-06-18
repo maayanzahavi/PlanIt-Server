@@ -109,10 +109,26 @@ const deleteProject = async (req, res) => {
     }
   };
 
+  const resetAllTasksAssignments = async (req, res) => {
+    const { projectId } = req.params;
+    try {
+        const project = await projectService.getProjectById(projectId);
+        if (!project) {
+            return res.status(404).json({ error: 'Project not found' });
+        }   
+
+        const updatedProject = await projectService.resetAllTasksAssignments(projectId);
+        res.status(200).json(updatedProject);
+    } catch (error) {
+        console.error('Error resetting task assignments:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
 
 module.exports = {
     createProject,
     getProjectById,
     updateProject,
-    deleteProject
+    deleteProject,
+    resetAllTasksAssignments
 }

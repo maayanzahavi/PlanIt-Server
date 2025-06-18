@@ -265,6 +265,32 @@ const sendAssignmentsNotification = async (projectId, initialAssignments) => {
     }
 }
 
+const resetAllTasksAssignments = async (projectId) => {
+    console.log('Resetting all tasks assignments for project:', projectId);
+    const userService = require('./user');
+
+    try {
+        const project = await getProjectById(projectId);
+        if (!project) {
+            throw new Error('Project not found');
+        }
+
+        // Reset all tasks assignments
+        for (const task of project.tasks) {
+            task.assignedTo = null;
+            await task.save(); 
+
+            // Remove task from user's tasks
+            await userService.removeTaskFromUser(task.assignedTo, task._id);
+        }   
+        console.log('All tasks assignments reset successfully for project:', projectId);
+        return project;
+    } catch (error) {
+        console.error('Error resetting tasks assignments:', error);
+        throw new Error('Error resetting tasks assignments: ' + error.message);
+    }
+}
+
 module.exports = {
     createProject,
     getProjectById,
@@ -272,5 +298,6 @@ module.exports = {
     deleteProject,
     addTasksToProject,
     removeTaskFromProject,
-    sendAssignmentsNotification
+    sendAssignmentsNotification,
+    resetAllTasksAssignments
 };

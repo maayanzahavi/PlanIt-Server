@@ -44,6 +44,9 @@ router.route("/:domain/users/:username/projects/:projectId")
   .get(tokenModel.isLoggedIn, projectController.getProjectById)
   .put(tokenModel.isLoggedIn, projectController.updateProject)
   .delete(tokenModel.isLoggedIn, projectController.deleteProject);
+
+router.route("/:domain/users/:username/projects/:projectId/reset-assignments")
+  .put(tokenModel.isLoggedIn, projectController.resetAllTasksAssignments);
   
 // Tasks
 router.route("/:domain/users/:username/tasks")
