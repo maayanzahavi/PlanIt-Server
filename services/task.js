@@ -173,12 +173,14 @@ const assignTaskToUser = async (taskId, userId) => {
         // If the task is already assigned to a user, remove the task from their tasks
         if (task.assignedTo) {
             const userService = require('./user');
-            await userService.removeTaskFromUser(task.assignedTo, taskId);
+            await userService.removeTaskFromUser(task.assignedTo._id, taskId);
         }
 
         // Add the task to the tasks list of the new user
         user.tasks.push(task._id);
         await user.save();
+
+        console.log(`Task ${taskId} assigned to user ${userId}`);
 
         // Change assignment in task
         task.assignedTo = userId;

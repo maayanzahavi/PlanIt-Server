@@ -1,80 +1,47 @@
 {
   "tasks": [
     {
-      "id": "68529c1a5c747fcfaced20cd",
+      "id": "684c3522de9c5ec7ecfe5bff",
       "skills": [
-        "68177f0ae010f653b19f8833"
+        "68177f0ae010f653b19f8845",
+        "68177f0ae010f653b19f8844",
+        "68177f0ae010f653b19f8841",
+        "68177f0ae010f653b19f8840"
+      ],
+      "priority": 5,
+      "assignedTo": null
+    },
+    {
+      "id": "684c3533de9c5ec7ecfe5c07",
+      "skills": [
+        "68177f0ae010f653b19f8845",
+        "68177f0ae010f653b19f8844",
+        "68177f0ae010f653b19f8841"
+      ],
+      "priority": 3,
+      "assignedTo": null
+    },
+    {
+      "id": "684c3547de9c5ec7ecfe5c0f",
+      "skills": [
+        "68177f0ae010f653b19f8849",
+        "68177f0ae010f653b19f885c"
+      ],
+      "priority": 5,
+      "assignedTo": null
+    },
+    {
+      "id": "684c355bde9c5ec7ecfe5c17",
+      "skills": [
+        "68177f0ae010f653b19f8839",
+        "68177f0ae010f653b19f8837",
+        "68177f0ae010f653b19f883a"
       ],
       "priority": 1,
-      "assignedTo": "684c1b020c9415b2366e5fe3"
-    },
-    {
-      "id": "68529c295c747fcfaced20d4",
-      "skills": [
-        "68177f0ae010f653b19f8831",
-        "68177f0ae010f653b19f8834",
-        "68177f0ae010f653b19f8836"
-      ],
-      "priority": 3,
-      "assignedTo": "684c1ba10c9415b2366e6047"
-    },
-    {
-      "id": "68529c425c747fcfaced20db",
-      "id": "68529c425c747fcfaced20db",
-      "skills": [
-        "68177f0ae010f653b19f8840",
-        "68177f0ae010f653b19f8872"
-        "68177f0ae010f653b19f8840",
-        "68177f0ae010f653b19f8872"
-      ],
-      "priority": 3,
-      "assignedTo": "684c1c420c9415b2366e60b9"
-    },
-    {
-      "id": "68529c515c747fcfaced20e2",
-      "id": "68529c515c747fcfaced20e2",
-      "skills": [
-        "68177f0ae010f653b19f8847",
-        "68177f0ae010f653b19f8848",
-        "68177f0ae010f653b19f8847",
-        "68177f0ae010f653b19f8848",
-        "68177f0ae010f653b19f8846",
-        "68177f0ae010f653b19f884c"
-      ],
-      "priority": 3,
-      "assignedTo": "684c1c420c9415b2366e60b9"
-    },
-    {
-      "id": "68529c675c747fcfaced20e9",
-      "skills": [
-        "68177f0ae010f653b19f8833",
-        "68177f0ae010f653b19f8832",
-        "68177f0ae010f653b19f8831"
-      ],
-      "priority": 3,
-      "assignedTo": "684c1c420c9415b2366e60b9"
+      "assignedTo": null
     }
   ],
   "members": [
-    {
-      "id": "684c1b020c9415b2366e5fe3",
-      "skills": [
-        "68177f0ae010f653b19f883d",
-        "684c1aed0c9415b2366e5fd6",
-        "68177f0ae010f653b19f8831",
-        "684c1aee0c9415b2366e5fda",
-        "684c1aef0c9415b2366e5fdc",
-        "684c1aee0c9415b2366e5fd8"
-      ],
-      "preferences": [
-        "68177f0ae010f653b19f8833",
-        "68177f0ae010f653b19f8835",
-        "68177f0ae010f653b19f8831",
-        "68177f0ae010f653b19f8834"
-      ],
-      "availability": 34.77844718915344,
-      "experience": 3
-    },
     {
       "id": "684c1ba10c9415b2366e6047",
       "skills": [
@@ -88,25 +55,28 @@
         "684c1aee0c9415b2366e5fda",
         "684c1aef0c9415b2366e5fdc"
       ],
-      "availability": 34.77844718915344,
+      "availability": 99.01330269510582,
       "experience": 4
     },
     {
-      "id": "684c1c420c9415b2366e60b9",
+      "id": "684c1bee0c9415b2366e607e",
       "skills": [
-        "68177f0ae010f653b19f8858",
-        "684c1c300c9415b2366e60af",
-        "68177f0ae010f653b19f885b",
-        "68177f0ae010f653b19f8859",
-        "684c1c310c9415b2366e60b1"
+        "68177f0ae010f653b19f8843",
+        "68177f0ae010f653b19f8841",
+        "68177f0ae010f653b19f886f",
+        "68177f0ae010f653b19f8846",
+        "68177f0ae010f653b19f884c",
+        "68177f0ae010f653b19f8840",
+        "68177f0ae010f653b19f885c"
       ],
       "preferences": [
-        "68177f0ae010f653b19f8843",
+        "68177f0ae010f653b19f8844",
+        "68177f0ae010f653b19f883c",
         "68177f0ae010f653b19f8842",
-        "68177f0ae010f653b19f8859"
+        "68177f0ae010f653b19f883f"
       ],
-      "availability": 34.77844718915344,
-      "experience": 5
+      "availability": 99.01330269510582,
+      "experience": 8
     }
   ],
   "preference_vs_urgency": 0.5

@@ -277,11 +277,14 @@ const resetAllTasksAssignments = async (projectId) => {
 
         // Reset all tasks assignments
         for (const task of project.tasks) {
+            // Remove task from user's tasks
+            if (task.assignedTo) {
+                await userService.removeTaskFromUser(task.assignedTo._id, task._id.toString());
+            }
+
+            // Reset task assignment
             task.assignedTo = null;
             await task.save(); 
-
-            // Remove task from user's tasks
-            await userService.removeTaskFromUser(task.assignedTo, task._id);
         }   
         console.log('All tasks assignments reset successfully for project:', projectId);
         return project;

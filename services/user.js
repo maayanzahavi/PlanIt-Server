@@ -438,6 +438,7 @@ const addTaskToUser = async (userId, taskId) => {
 }
 
 const removeTaskFromUser = async (userId, taskId) => {
+  console.log("Remove task from user: ", userId);
   try {
     const user = await User.findById(userId);
     if (!user) {
