@@ -172,8 +172,8 @@ const assignTaskToUser = async (taskId, userId) => {
 
         // If the task is already assigned to a user, remove the task from their tasks
         if (task.assignedTo) {
-            const prevUser = task.assignedTo;
-            prevUser.tasks = prevUser.tasks.filter((t) => t !== task._id);
+            const userService = require('./user');
+            await userService.removeTaskFromUser(task.assignedTo, taskId);
         }
 
         // Add the task to the tasks list of the new user
@@ -199,5 +199,5 @@ module.exports = {
     deleteTask,
     getProjectTasks,
     changeTaskStatus,
-    assignTaskToUser
+    assignTaskToUser,
 }
