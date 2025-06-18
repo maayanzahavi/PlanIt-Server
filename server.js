@@ -14,7 +14,7 @@ app.use(express.json({ limit: '100mb' }));
 app.use(express.urlencoded({ limit: '100mb', extended: true }));
 
 
-app.use(express.static('client'));
+app.use(express.static('Client'));
 
 // === ROUTES ===
 app.use("/api/loadBalance", require("./routes/loadBalance"));
@@ -26,7 +26,7 @@ app.use('/api', require('./routes/password'));
 app.use('/api/ai', require('./routes/ai'));
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client', 'index.html'));
+  res.sendFile(path.join(__dirname, 'Client', 'index.html'));
 });
 
 // === CONNECT TO MONGODB & START SERVER ===
