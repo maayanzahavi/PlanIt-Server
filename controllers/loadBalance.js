@@ -90,7 +90,7 @@ const runLoadBalancer = async (req, res) => {
     parseDataToInputFile(project, inputPath);
 
     // Execute the Python script
-    exec(`python3 ${scriptPath}`, async (error, stdout, stderr) => {
+    exec(`venv/bin/python3 ${scriptPath}`, async (error, stdout, stderr) => {
       if (error) {
         console.error(`Error executing script: ${error.message}`);
         return res.status(500).json({ error: "Failed to execute load balancing algorithm" });
