@@ -26,7 +26,7 @@ app.use('/api', require('./routes/password'));
 app.use('/api/ai', require('./routes/ai'));
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client', 'index.html'));
+  res.sendFile(path.join(__dirname, 'Client', 'index.html'));
 });
 
 // === CONNECT TO MONGODB & START SERVER ===
