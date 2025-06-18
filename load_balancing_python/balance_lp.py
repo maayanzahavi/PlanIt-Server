@@ -74,7 +74,7 @@ for task in tasks:
     problem += p.lpSum([variables[(task["id"], member["id"])] for member in members]) == 1
 
 # Make sure each member is assigned to at lest one task
-if len(members) >= len(tasks):
+if len(members) <= len(tasks):
     for member in members:
         problem += p.lpSum([variables[(task["id"], member["id"])] for task in tasks]) >= 1
 

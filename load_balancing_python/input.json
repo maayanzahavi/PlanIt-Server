@@ -1,149 +1,105 @@
 {
   "tasks": [
     {
-      "id": "68516ff4dbe0f49c19c7ca54",
+      "id": "68529c1a5c747fcfaced20cd",
+      "skills": [
+        "68177f0ae010f653b19f8833"
+      ],
+      "priority": 1,
+      "assignedTo": "684c1b020c9415b2366e5fe3"
+    },
+    {
+      "id": "68529c295c747fcfaced20d4",
       "skills": [
         "68177f0ae010f653b19f8831",
         "68177f0ae010f653b19f8834",
         "68177f0ae010f653b19f8836"
       ],
-      "priority": 1,
-      "assignedTo": null
+      "priority": 3,
+      "assignedTo": "684c1ba10c9415b2366e6047"
     },
     {
-      "id": "68517005dbe0f49c19c7ca5b",
+      "id": "68529c425c747fcfaced20db",
       "skills": [
-        "68177f0ae010f653b19f8845",
-        "68177f0ae010f653b19f8844",
-        "68177f0ae010f653b19f8840"
+        "68177f0ae010f653b19f8840",
+        "68177f0ae010f653b19f8872"
       ],
-      "priority": 1,
-      "assignedTo": null
+      "priority": 3,
+      "assignedTo": "684c1c420c9415b2366e60b9"
     },
     {
-      "id": "68517017dbe0f49c19c7ca62",
+      "id": "68529c515c747fcfaced20e2",
       "skills": [
-        "68177f0ae010f653b19f8831",
+        "68177f0ae010f653b19f8847",
+        "68177f0ae010f653b19f8848",
         "68177f0ae010f653b19f8846",
         "68177f0ae010f653b19f884c"
       ],
-      "priority": 1,
-      "assignedTo": null
+      "priority": 3,
+      "assignedTo": "684c1c420c9415b2366e60b9"
+    },
+    {
+      "id": "68529c675c747fcfaced20e9",
+      "skills": [
+        "68177f0ae010f653b19f8833",
+        "68177f0ae010f653b19f8832",
+        "68177f0ae010f653b19f8831"
+      ],
+      "priority": 3,
+      "assignedTo": "684c1c420c9415b2366e60b9"
     }
   ],
   "members": [
     {
       "id": "684c1b020c9415b2366e5fe3",
       "skills": [
-        {
-          "_id": "68177f0ae010f653b19f883d",
-          "label": "Algorithms"
-        },
-        {
-          "_id": "68177f0ae010f653b19f8831",
-          "label": "Machine Learning"
-        }
+        "68177f0ae010f653b19f883d",
+        "684c1aed0c9415b2366e5fd6",
+        "68177f0ae010f653b19f8831",
+        "684c1aee0c9415b2366e5fda",
+        "684c1aef0c9415b2366e5fdc",
+        "684c1aee0c9415b2366e5fd8"
       ],
       "preferences": [
-        {
-          "_id": "68177f0ae010f653b19f8833",
-          "label": "Artificial Intelligence"
-        },
-        {
-          "_id": "68177f0ae010f653b19f8835",
-          "label": "Computer Vision"
-        },
-        {
-          "_id": "68177f0ae010f653b19f8831",
-          "label": "Machine Learning"
-        },
-        {
-          "_id": "68177f0ae010f653b19f8834",
-          "label": "Natural Language Processing"
-        }
+        "68177f0ae010f653b19f8833",
+        "68177f0ae010f653b19f8835",
+        "68177f0ae010f653b19f8831",
+        "68177f0ae010f653b19f8834"
       ],
-      "availability": 34.6951125,
+      "availability": 34.77844718915344,
       "experience": 3
     },
     {
       "id": "684c1ba10c9415b2366e6047",
       "skills": [
-        {
-          "_id": "68177f0ae010f653b19f8845",
-          "label": "CSS"
-        },
-        {
-          "_id": "68177f0ae010f653b19f8844",
-          "label": "HTML"
-        },
-        {
-          "_id": "68177f0ae010f653b19f8841",
-          "label": "JavaScript"
-        },
-        {
-          "_id": "68177f0ae010f653b19f8840",
-          "label": "React"
-        }
+        "68177f0ae010f653b19f8845",
+        "68177f0ae010f653b19f8844",
+        "68177f0ae010f653b19f8841",
+        "68177f0ae010f653b19f8840"
       ],
-      "preferences": [],
-      "availability": 34.6951125,
+      "preferences": [
+        "684c1aed0c9415b2366e5fd6",
+        "684c1aee0c9415b2366e5fda",
+        "684c1aef0c9415b2366e5fdc"
+      ],
+      "availability": 34.77844718915344,
       "experience": 4
     },
     {
       "id": "684c1c420c9415b2366e60b9",
       "skills": [
-        {
-          "_id": "68177f0ae010f653b19f885b",
-          "label": "Project Management"
-        },
-        {
-          "_id": "68177f0ae010f653b19f8858",
-          "label": "Agile"
-        },
-        {
-          "_id": "68177f0ae010f653b19f8848",
-          "label": "MongoDB"
-        },
-        {
-          "_id": "68177f0ae010f653b19f885b",
-          "label": "Project Management"
-        },
-        {
-          "_id": "68177f0ae010f653b19f8842",
-          "label": "Python"
-        },
-        {
-          "_id": "68177f0ae010f653b19f884c",
-          "label": "RESTful APIs"
-        },
-        {
-          "_id": "68177f0ae010f653b19f8859",
-          "label": "Scrum"
-        }
+        "68177f0ae010f653b19f8858",
+        "684c1c300c9415b2366e60af",
+        "68177f0ae010f653b19f885b",
+        "68177f0ae010f653b19f8859",
+        "684c1c310c9415b2366e60b1"
       ],
       "preferences": [
-        {
-          "_id": "68177f0ae010f653b19f8843",
-          "label": "Java"
-        },
-        {
-          "_id": "68177f0ae010f653b19f8842",
-          "label": "Python"
-        },
-        {
-          "_id": "68177f0ae010f653b19f8859",
-          "label": "Scrum"
-        },
-        {
-          "_id": "68177f0ae010f653b19f883e",
-          "label": "Neural Networks"
-        },
-        {
-          "_id": "68177f0ae010f653b19f8872",
-          "label": "UX/UI Design"
-        }
+        "68177f0ae010f653b19f8843",
+        "68177f0ae010f653b19f8842",
+        "68177f0ae010f653b19f8859"
       ],
-      "availability": 34.6951125,
+      "availability": 34.77844718915344,
       "experience": 5
     }
   ],
